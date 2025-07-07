@@ -1,0 +1,394 @@
+/* AI图片描述优化助手 - 样式文件 */
+
+.ai-optimizer-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+  margin-top: 20px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 头部区域 */
+.optimizer-header {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.optimizer-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.optimizer-main-icon {
+  font-size: 24px;
+}
+
+.optimizer-settings-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.optimizer-settings-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* 内容区域 */
+.optimizer-content {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+}
+
+/* 每一行的布局 */
+.optimizer-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.optimizer-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+  min-width: 120px;
+  font-size: 14px;
+}
+
+.optimizer-icon {
+  font-size: 16px;
+}
+
+/* 下拉菜单样式 */
+.optimizer-select {
+  flex: 1;
+  padding: 10px 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 10px;
+  background: white;
+  font-size: 14px;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.optimizer-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.optimizer-select:hover {
+  border-color: #667eea;
+}
+
+/* 操作按钮区域 */
+.optimizer-actions {
+  text-align: center;
+  margin: 24px 0;
+  padding: 16px 0;
+  border-top: 1px solid #e1e8ed;
+  border-bottom: 1px solid #e1e8ed;
+}
+
+/* 按钮样式 */
+.optimizer-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  user-select: none;
+}
+
+.optimizer-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  font-size: 16px;
+  padding: 14px 32px;
+}
+
+.optimizer-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.optimizer-btn-secondary {
+  background: #f8f9fa;
+  color: #2c3e50;
+  border: 2px solid #e1e8ed;
+}
+
+.optimizer-btn-secondary:hover {
+  background: #e9ecef;
+  border-color: #667eea;
+  color: #667eea;
+  transform: translateY(-1px);
+}
+
+/* 结果区域 */
+.optimizer-result-section {
+  margin-top: 20px;
+}
+
+.optimizer-result-container {
+  position: relative;
+}
+
+.optimizer-result {
+  width: 100%;
+  min-height: 120px;
+  padding: 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  font-family: inherit;
+  background: #f8f9fa;
+  color: #2c3e50;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.optimizer-result:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: white;
+}
+
+.optimizer-result-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* 加载动画 */
+.optimizer-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border-radius: 16px;
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e1e8ed;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.optimizer-loading span {
+  color: #667eea;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Toast 提示 */
+.optimizer-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #2c3e50;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateX(100px);
+  transition: all 0.3s ease;
+}
+
+.optimizer-toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .optimizer-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .optimizer-label {
+    min-width: auto;
+    margin-bottom: 4px;
+  }
+  
+  .optimizer-content {
+    padding: 16px;
+  }
+  
+  .optimizer-header {
+    padding: 12px 16px;
+  }
+  
+  .optimizer-title {
+    font-size: 16px;
+  }
+  
+  .optimizer-result-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .optimizer-btn {
+    justify-content: center;
+  }
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .optimizer-content {
+    background: rgba(30, 30, 30, 0.95);
+    color: #e1e8ed;
+  }
+  
+  .optimizer-label {
+    color: #e1e8ed;
+  }
+  
+  .optimizer-select {
+    background: #2c3e50;
+    border-color: #4a5568;
+    color: #e1e8ed;
+  }
+  
+  .optimizer-select:focus,
+  .optimizer-select:hover {
+    border-color: #667eea;
+  }
+  
+  .optimizer-result {
+    background: #2c3e50;
+    border-color: #4a5568;
+    color: #e1e8ed;
+  }
+  
+  .optimizer-result:focus {
+    background: #34495e;
+  }
+  
+  .optimizer-btn-secondary {
+    background: #2c3e50;
+    color: #e1e8ed;
+    border-color: #4a5568;
+  }
+  
+  .optimizer-btn-secondary:hover {
+    background: #34495e;
+  }
+}
+
+/* 滚动条美化 */
+.optimizer-result::-webkit-scrollbar {
+  width: 6px;
+}
+
+.optimizer-result::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.optimizer-result::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.optimizer-result::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 选中状态优化 */
+.optimizer-select option:checked {
+  background-color: #667eea;
+  color: white;
+}
+
+/* 禁用状态 */
+.optimizer-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.optimizer-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* 聚焦状态增强 */
+.optimizer-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+/* 过渡动画 */
+.ai-optimizer-container * {
+  transition: all 0.2s ease;
+}
+
+/* 避免与原网站样式冲突 */
+.ai-optimizer-container,
+.ai-optimizer-container * {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}

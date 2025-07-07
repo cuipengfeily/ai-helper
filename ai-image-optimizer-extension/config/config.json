@@ -1,0 +1,146 @@
+{
+  "version": "1.0.0",
+  "defaultModel": "chatgpt-3.5",
+  "categories": [
+    {
+      "key": "style",
+      "name": "图片风格",
+      "icon": "🎨",
+      "required": false,
+      "options": [
+        {"value": "", "label": "请选择风格", "prompt": ""},
+        {"value": "cartoon", "label": "卡通风格", "prompt": "cartoon style, animated"},
+        {"value": "realistic", "label": "写实风格", "prompt": "photorealistic, highly detailed"},
+        {"value": "oil_painting", "label": "油画风格", "prompt": "oil painting style, classical art"},
+        {"value": "watercolor", "label": "水彩风格", "prompt": "watercolor painting, soft brushstrokes"},
+        {"value": "sketch", "label": "素描风格", "prompt": "pencil sketch, line art"},
+        {"value": "digital_art", "label": "数字艺术", "prompt": "digital art, concept art"},
+        {"value": "anime", "label": "动漫风格", "prompt": "anime style, manga"},
+        {"value": "vintage", "label": "复古风格", "prompt": "vintage style, retro"}
+      ]
+    },
+    {
+      "key": "character",
+      "name": "人物特征",
+      "icon": "🎭",
+      "required": false,
+      "options": [
+        {"value": "", "label": "请选择人物", "prompt": ""},
+        {"value": "modern", "label": "现代人物", "prompt": "modern character, contemporary"},
+        {"value": "ancient", "label": "古装人物", "prompt": "ancient Chinese costume, traditional clothing"},
+        {"value": "anime_char", "label": "动漫角色", "prompt": "anime character, manga style"},
+        {"value": "fantasy", "label": "奇幻人物", "prompt": "fantasy character, magical"},
+        {"value": "sci_fi", "label": "科幻人物", "prompt": "sci-fi character, futuristic"},
+        {"value": "child", "label": "儿童角色", "prompt": "child character, young"},
+        {"value": "elderly", "label": "老年人物", "prompt": "elderly character, wise"},
+        {"value": "warrior", "label": "战士角色", "prompt": "warrior character, heroic"}
+      ]
+    },
+    {
+      "key": "color",
+      "name": "色彩风格",
+      "icon": "🌈",
+      "required": false,
+      "options": [
+        {"value": "", "label": "请选择色彩", "prompt": ""},
+        {"value": "bright", "label": "明亮色调", "prompt": "bright colors, vibrant"},
+        {"value": "dark", "label": "暗调风格", "prompt": "dark tones, moody"},
+        {"value": "monochrome", "label": "黑白风格", "prompt": "black and white, monochrome"},
+        {"value": "vintage_color", "label": "复古色调", "prompt": "vintage colors, sepia tones"},
+        {"value": "neon", "label": "霓虹色彩", "prompt": "neon colors, glowing"},
+        {"value": "pastel", "label": "柔和色调", "prompt": "pastel colors, soft tones"},
+        {"value": "warm", "label": "暖色调", "prompt": "warm colors, golden hour"},
+        {"value": "cool", "label": "冷色调", "prompt": "cool colors, blue tones"}
+      ]
+    },
+    {
+      "key": "composition",
+      "name": "构图方式",
+      "icon": "📐",
+      "required": false,
+      "options": [
+        {"value": "", "label": "请选择构图", "prompt": ""},
+        {"value": "center", "label": "居中构图", "prompt": "centered composition"},
+        {"value": "rule_of_thirds", "label": "三分法则", "prompt": "rule of thirds composition"},
+        {"value": "symmetrical", "label": "对称构图", "prompt": "symmetrical composition"},
+        {"value": "dynamic", "label": "动态构图", "prompt": "dynamic composition, action pose"},
+        {"value": "close_up", "label": "特写构图", "prompt": "close-up shot, detailed"},
+        {"value": "wide_shot", "label": "全景构图", "prompt": "wide shot, panoramic"},
+        {"value": "portrait", "label": "肖像构图", "prompt": "portrait composition"},
+        {"value": "landscape", "label": "风景构图", "prompt": "landscape composition"}
+      ]
+    },
+    {
+      "key": "scene",
+      "name": "场景设定",
+      "icon": "🌍",
+      "required": false,
+      "options": [
+        {"value": "", "label": "请选择场景", "prompt": ""},
+        {"value": "indoor", "label": "室内场景", "prompt": "indoor scene, interior"},
+        {"value": "outdoor", "label": "户外场景", "prompt": "outdoor scene, exterior"},
+        {"value": "city", "label": "城市场景", "prompt": "urban scene, cityscape"},
+        {"value": "nature", "label": "自然场景", "prompt": "natural scene, wilderness"},
+        {"value": "space", "label": "太空场景", "prompt": "space scene, cosmic"},
+        {"value": "underwater", "label": "水下场景", "prompt": "underwater scene, aquatic"},
+        {"value": "fantasy_world", "label": "奇幻世界", "prompt": "fantasy world, magical realm"},
+        {"value": "historical", "label": "历史场景", "prompt": "historical scene, period setting"}
+      ]
+    },
+    {
+      "key": "lighting",
+      "name": "光影效果",
+      "icon": "💡",
+      "required": false,
+      "options": [
+        {"value": "", "label": "请选择光影", "prompt": ""},
+        {"value": "natural", "label": "自然光", "prompt": "natural lighting, daylight"},
+        {"value": "artificial", "label": "人工光", "prompt": "artificial lighting, studio lighting"},
+        {"value": "backlight", "label": "逆光效果", "prompt": "backlit, rim lighting"},
+        {"value": "side_light", "label": "侧光效果", "prompt": "side lighting, dramatic shadows"},
+        {"value": "golden_hour", "label": "黄金时刻", "prompt": "golden hour lighting, warm glow"},
+        {"value": "blue_hour", "label": "蓝调时刻", "prompt": "blue hour, twilight"},
+        {"value": "dramatic", "label": "戏剧光影", "prompt": "dramatic lighting, high contrast"},
+        {"value": "soft", "label": "柔和光线", "prompt": "soft lighting, diffused"}
+      ]
+    }
+  ],
+  "aiModels": [
+    {
+      "id": "openai-free",
+      "name": "ChatGPT (免费)",
+      "apiUrl": "https://api.openai.com/v1/chat/completions",
+      "free": true,
+      "needsApiKey": true,
+      "description": "使用OpenAI的ChatGPT模型"
+    },
+    {
+      "id": "claude-free",
+      "name": "Claude (免费)",
+      "apiUrl": "https://api.anthropic.com/v1/messages",
+      "free": true,
+      "needsApiKey": true,
+      "description": "使用Anthropic的Claude模型"
+    },
+    {
+      "id": "gemini-free",
+      "name": "Gemini (免费)",
+      "apiUrl": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      "free": true,
+      "needsApiKey": true,
+      "description": "使用Google的Gemini模型"
+    },
+    {
+      "id": "local-ollama",
+      "name": "本地模型 (Ollama)",
+      "apiUrl": "http://localhost:11434/api/generate",
+      "free": true,
+      "needsApiKey": false,
+      "description": "使用本地部署的Ollama模型"
+    }
+  ],
+  "prompts": {
+    "optimize": "请基于用户原始的图片描述：'{originalText}'，结合以下特征要求：{features}，生成一个更加详细、生动、适合AI图片生成的优化描述。要求：1）保持原意不变；2）增加视觉细节；3）使用适合AI理解的关键词；4）控制在150字以内。只返回优化后的描述，不要其他解释。",
+    "generate": "请根据以下图片特征要求：{features}，生成一个详细、生动、适合AI图片生成的完整描述。要求：1）画面要有主体内容；2）包含丰富的视觉细节；3）使用适合AI理解的关键词；4）控制在150字以内。只返回图片描述，不要其他解释。"
+  }
+}

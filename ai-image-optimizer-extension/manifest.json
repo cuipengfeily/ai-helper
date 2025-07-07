@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "AI图片描述优化助手",
+  "version": "1.0.0",
+  "description": "智能优化AI图片生成的文本描述，提升图片生成质量",
+  
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  
+  "host_permissions": [
+    "https://jimeng.jianying.com/*",
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  
+  "content_scripts": [
+    {
+      "matches": ["https://jimeng.jianying.com/ai-tool/home/*"],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_end"
+    }
+  ],
+  
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "AI图片描述优化助手",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  
+  "options_page": "options/options.html",
+  
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["config/config.json"],
+      "matches": ["https://jimeng.jianying.com/*"]
+    }
+  ]
+}

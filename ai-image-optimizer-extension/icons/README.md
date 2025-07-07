@@ -37,6 +37,23 @@
    - [Heroicons](https://heroicons.com/)
    - [Tabler Icons](https://tabler-icons.io/)
 
+## 快速获取图标
+
+### 🚀 最简单方式（推荐）
+1. 在浏览器中打开 `simple_icon_generator.html`
+2. 点击"生成并下载所有图标"按钮
+3. 将下载的3个PNG文件直接放在此目录下
+
+### 🎨 高级自定义
+1. 打开 `create_icons.html` 获得更精美的渐变图标
+2. 或编辑 `icon.svg` 后使用在线工具转换为PNG
+
+### 📋 免费图标资源
+查看 `get_free_icons.md` 获取更多免费图标选择
+
 ## 安装说明
 
-将图标文件放置在 `icons/` 目录下，确保文件名与 `manifest.json` 中的配置一致。
+将图标文件放置在 `icons/` 目录下，确保文件名与 `manifest.json` 中的配置一致：
+- `icon16.png` (16×16像素)
+- `icon48.png` (48×48像素)  
+- `icon128.png` (128×128像素)

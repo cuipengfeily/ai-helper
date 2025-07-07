@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图标生成器 - AI图片描述优化助手</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .icon-preview {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .icon-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .icon-item canvas {
+            border: 1px solid #e9ecef;
+            margin-bottom: 10px;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .description {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        .svg-source {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 AI图片描述优化助手 - 图标生成器</h1>
+        
+        <div class="description">
+            <strong>图标设计说明：</strong>
+            <ul>
+                <li>🖼️ 图片框架：代表图像处理功能</li>
+                <li>⚡ 闪电图标：象征AI智能优化</li>
+                <li>🎨 渐变色彩：符合插件主题色（#667eea → #764ba2）</li>
+                <li>📐 简洁设计：确保在小尺寸下清晰可见</li>
+            </ul>
+        </div>
+
+        <div class="icon-preview">
+            <div class="icon-item">
+                <canvas id="icon16" width="16" height="16"></canvas>
+                <div>16×16</div>
+            </div>
+            <div class="icon-item">
+                <canvas id="icon48" width="48" height="48"></canvas>
+                <div>48×48</div>
+            </div>
+            <div class="icon-item">
+                <canvas id="icon128" width="128" height="128"></canvas>
+                <div>128×128</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="generateIcons()">🎨 生成图标</button>
+            <button onclick="downloadAll()">📥 下载所有图标</button>
+        </div>
+
+        <div class="svg-source">
+            <strong>SVG源码：</strong>
+            <pre id="svgSource"></pre>
+        </div>
+    </div>
+
+    <script>
+        // SVG图标定义
+        const iconSVG = `
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ffa500;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            
+            <!-- 图片框架 -->
+            <rect x="2" y="3" width="16" height="12" rx="2" ry="2" 
+                  fill="none" stroke="url(#grad1)" stroke-width="1.5"/>
+            
+            <!-- 图片内容示意 -->
+            <circle cx="6" cy="7" r="1.5" fill="url(#grad1)" opacity="0.6"/>
+            <polyline points="2,13 6,9 10,13 14,10 18,13" 
+                      fill="none" stroke="url(#grad1)" stroke-width="1.2" opacity="0.6"/>
+            
+            <!-- AI优化闪电图标 -->
+            <path d="M15,16 L18,16 L15,21 L12,21 L15,16 Z M15,16 L12,12 L15,12 L12,7 L9,12 L12,12" 
+                  fill="url(#grad2)" stroke="#fff" stroke-width="0.5"/>
+            
+            <!-- 光效 -->
+            <circle cx="15" cy="12" r="4" fill="url(#grad2)" opacity="0.1"/>
+        </svg>`;
+
+        // 显示SVG源码
+        document.getElementById('svgSource').textContent = iconSVG;
+
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            const scale = size / 24; // 基准尺寸24px
+            
+            // 清空画布
+            ctx.clearRect(0, 0, size, size);
+            
+            // 设置画布样式
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // 缩放上下文
+            ctx.scale(scale, scale);
+            
+            // 创建渐变
+            const grad1 = ctx.createLinearGradient(0, 0, 24, 24);
+            grad1.addColorStop(0, '#667eea');
+            grad1.addColorStop(1, '#764ba2');
+            
+            const grad2 = ctx.createLinearGradient(0, 0, 24, 24);
+            grad2.addColorStop(0, '#ffd700');
+            grad2.addColorStop(1, '#ffa500');
+            
+            // 绘制图片框架
+            ctx.strokeStyle = grad1;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(2, 3, 16, 12, 2);
+            ctx.stroke();
+            
+            // 绘制图片内容 - 圆点（太阳）
+            ctx.fillStyle = grad1;
+            ctx.globalAlpha = 0.6;
+            ctx.beginPath();
+            ctx.arc(6, 7, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 绘制图片内容 - 山峦轮廓
+            ctx.strokeStyle = grad1;
+            ctx.lineWidth = 1.2;
+            ctx.globalAlpha = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(2, 13);
+            ctx.lineTo(6, 9);
+            ctx.lineTo(10, 13);
+            ctx.lineTo(14, 10);
+            ctx.lineTo(18, 13);
+            ctx.stroke();
+            
+            // 重置透明度
+            ctx.globalAlpha = 1;
+            
+            // 绘制AI闪电图标
+            ctx.fillStyle = grad2;
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(15, 16);
+            ctx.lineTo(18, 16);
+            ctx.lineTo(15, 21);
+            ctx.lineTo(12, 21);
+            ctx.lineTo(15, 16);
+            ctx.moveTo(15, 16);
+            ctx.lineTo(12, 12);
+            ctx.lineTo(15, 12);
+            ctx.lineTo(12, 7);
+            ctx.lineTo(9, 12);
+            ctx.lineTo(12, 12);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // 绘制光效
+            ctx.fillStyle = grad2;
+            ctx.globalAlpha = 0.1;
+            ctx.beginPath();
+            ctx.arc(15, 12, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+
+        function generateIcons() {
+            const sizes = [
+                { id: 'icon16', size: 16 },
+                { id: 'icon48', size: 48 },
+                { id: 'icon128', size: 128 }
+            ];
+            
+            sizes.forEach(({ id, size }) => {
+                const canvas = document.getElementById(id);
+                drawIcon(canvas, size);
+            });
+        }
+
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function downloadAll() {
+            const icons = [
+                { id: 'icon16', filename: 'icon16.png' },
+                { id: 'icon48', filename: 'icon48.png' },
+                { id: 'icon128', filename: 'icon128.png' }
+            ];
+            
+            icons.forEach(({ id, filename }) => {
+                const canvas = document.getElementById(id);
+                setTimeout(() => downloadCanvas(canvas, filename), 100);
+            });
+            
+            alert('图标文件将自动下载，请将下载的文件放入 icons/ 目录下');
+        }
+
+        // 页面加载时自动生成图标
+        window.onload = function() {
+            generateIcons();
+        };
+
+        // 添加roundRect方法支持（兼容性）
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+                this.moveTo(x + radius, y);
+                this.lineTo(x + width - radius, y);
+                this.quadraticCurveTo(x + width, y, x + width, y + radius);
+                this.lineTo(x + width, y + height - radius);
+                this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                this.lineTo(x + radius, y + height);
+                this.quadraticCurveTo(x, y + height, x, y + height - radius);
+                this.lineTo(x, y + radius);
+                this.quadraticCurveTo(x, y, x + radius, y);
+                this.closePath();
+            };
+        }
+    </script>
+</body>
+</html>

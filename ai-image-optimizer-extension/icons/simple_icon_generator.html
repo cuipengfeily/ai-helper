@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>一键生成图标</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+        .container { background: white; padding: 30px; border-radius: 10px; max-width: 500px; margin: 0 auto; }
+        button { background: #667eea; color: white; border: none; padding: 15px 30px; font-size: 16px; border-radius: 5px; cursor: pointer; margin: 10px; }
+        button:hover { background: #5a6fd8; }
+        .icons { margin: 20px 0; }
+        canvas { border: 1px solid #ddd; margin: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 AI图片优化插件图标生成器</h1>
+        <p>点击下面按钮生成并下载所需的图标文件</p>
+        
+        <button onclick="generateAndDownload()">🚀 生成并下载所有图标</button>
+        
+        <div class="icons">
+            <canvas id="icon16" width="16" height="16"></canvas>
+            <canvas id="icon48" width="48" height="48"></canvas>
+            <canvas id="icon128" width="128" height="128"></canvas>
+        </div>
+        
+        <p><small>生成的图标文件会自动下载，请将它们放入 icons/ 目录</small></p>
+    </div>
+
+    <script>
+        function drawIcon(ctx, size) {
+            // 清空画布
+            ctx.clearRect(0, 0, size, size);
+            
+            // 设置背景色
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(0, 0, size, size);
+            
+            // 绘制白色图标
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = Math.max(1, size / 20);
+            
+            const scale = size / 24;
+            
+            // 绘制图片框架
+            ctx.strokeRect(3 * scale, 4 * scale, 14 * scale, 10 * scale);
+            
+            // 绘制闪电(AI符号)
+            ctx.beginPath();
+            ctx.moveTo(15 * scale, 8 * scale);
+            ctx.lineTo(12 * scale, 8 * scale);
+            ctx.lineTo(14 * scale, 12 * scale);
+            ctx.lineTo(11 * scale, 12 * scale);
+            ctx.lineTo(13 * scale, 16 * scale);
+            ctx.lineTo(16 * scale, 13 * scale);
+            ctx.lineTo(14 * scale, 13 * scale);
+            ctx.lineTo(17 * scale, 9 * scale);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 绘制小圆点(图片内容示意)
+            ctx.beginPath();
+            ctx.arc(6 * scale, 7 * scale, 1 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function generateIcon(size, filename) {
+            const canvas = document.getElementById(`icon${size}`);
+            const ctx = canvas.getContext('2d');
+            drawIcon(ctx, size);
+            
+            // 下载
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function generateAndDownload() {
+            // 依次生成三个尺寸的图标
+            setTimeout(() => generateIcon(16, 'icon16.png'), 100);
+            setTimeout(() => generateIcon(48, 'icon48.png'), 200);
+            setTimeout(() => generateIcon(128, 'icon128.png'), 300);
+            
+            alert('图标已生成并开始下载！\n请将下载的文件放入 icons/ 目录下。');
+        }
+
+        // 页面加载时预览图标
+        window.onload = function() {
+            drawIcon(document.getElementById('icon16').getContext('2d'), 16);
+            drawIcon(document.getElementById('icon48').getContext('2d'), 48);
+            drawIcon(document.getElementById('icon128').getContext('2d'), 128);
+        };
+    </script>
+</body>
+</html>

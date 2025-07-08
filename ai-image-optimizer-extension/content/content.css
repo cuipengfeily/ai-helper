@@ -30,15 +30,45 @@
   box-sizing: border-box;
 }
 
-/* 插件固定尺寸样式 */
+/* 插件可调整尺寸样式 */
 .ai-optimizer-container {
   width: 600px !important;
-  height: 400px !important;
+  height: 400px; /* 移除 !important，允许JavaScript动态调整 */
+  min-width: 400px !important;
+  max-width: 800px !important;
+  min-height: 300px !important;
+  max-height: 80vh !important;
   resize: none !important;
-  min-width: 600px !important;
-  max-width: 600px !important;
-  min-height: 400px !important;
-  max-height: 400px !important;
+  position: relative !important;
+}
+
+/* 调整大小手柄 */
+.ai-optimizer-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  cursor: ns-resize;
+  z-index: 10001;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ai-optimizer-container:hover::after {
+  opacity: 1;
+}
+
+/* 拖拽调整时的样式 */
+.ai-optimizer-container.resizing {
+  user-select: none;
+}
+
+.ai-optimizer-container.resizing::after {
+  opacity: 1;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%);
 }
 
 /* 相对定位模式 */
@@ -142,7 +172,7 @@
   background: rgba(255, 255, 255, 0.95);
   color: #333;
   /* 支持垂直滚动 */
-  overflow-y: auto;
+  overflow-y: hidden; /* 默认隐藏滚动条 */
   overflow-x: hidden;
   position: relative;
   z-index: 10000;
@@ -150,6 +180,8 @@
   flex: 1;
   min-height: 0; /* 重要：允许flex子元素收缩 */
   /* 移除固定最大高度，让flex布局自动计算 */
+  display: flex;
+  flex-direction: column;
 }
 
 /* 每一行的布局 */

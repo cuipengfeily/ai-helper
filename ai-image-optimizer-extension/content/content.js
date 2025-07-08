@@ -277,6 +277,9 @@ class AIImageOptimizer {
         // 添加拖拽功能
         this.addDragFunctionality();
         
+        // 添加调整大小功能
+        this.addResizeFunctionality();
+        
         // 恢复保存的位置和大小
         this.restorePluginPosition();
         
@@ -883,49 +886,130 @@ class AIImageOptimizer {
   }
 
   addResizeFunctionality() {
-    // 固定插件大小为600*400像素
     if (!this.optimizerContainer) return;
 
-    console.log('设置固定插件大小: 600*400像素');
+    console.log('添加垂直拖拽调整大小功能');
 
-    // 设置固定尺寸
+    // 设置初始尺寸
     this.optimizerContainer.style.width = '600px';
     this.optimizerContainer.style.height = '400px';
-    this.optimizerContainer.style.resize = 'none';
-    this.optimizerContainer.style.minWidth = '600px';
-    this.optimizerContainer.style.maxWidth = '600px';
-    this.optimizerContainer.style.minHeight = '400px';
-    this.optimizerContainer.style.maxHeight = '400px';
+    this.optimizerContainer.style.minWidth = '400px';
+    this.optimizerContainer.style.maxWidth = '800px';
+    this.optimizerContainer.style.minHeight = '300px';
+    this.optimizerContainer.style.maxHeight = '80vh';
 
-    // 调整内容区域的高度和滚动
+    // 添加垂直拖拽调整功能
+    this.addVerticalResizeHandle();
+
+    // 调整内容区域
     this.adjustContentArea(400);
     
-    // 检查是否需要显示容器滚动条
-    this.checkContainerScroll(600, 400);
-    
-    // 保存固定大小
+    // 保存初始大小
     this.savePluginSize();
     
-    console.log('插件大小已固定为600*400像素');
+    console.log('垂直拖拽调整功能已添加');
+  }
+
+  addVerticalResizeHandle() {
+    if (!this.optimizerContainer) return;
+
+    let isResizing = false;
+    let startY, startHeight;
+
+    // 监听鼠标在容器底部的移动
+    const handleMouseDown = (e) => {
+      console.log('鼠标按下事件触发');
+      
+      // 检查是否在底部6px区域内
+      const rect = this.optimizerContainer.getBoundingClientRect();
+      const bottomArea = rect.bottom - 6;
+      
+      console.log('鼠标按下事件:', {
+        clientY: e.clientY,
+        rectBottom: rect.bottom,
+        bottomArea,
+        isInResizeArea: e.clientY >= bottomArea && e.clientY <= rect.bottom
+      });
+      
+      if (e.clientY >= bottomArea && e.clientY <= rect.bottom) {
+        console.log('在调整区域内，开始调整大小');
+        isResizing = true;
+        startY = e.clientY;
+        startHeight = this.optimizerContainer.offsetHeight;
+        
+        console.log('开始调整大小:', {
+          startY,
+          startHeight,
+          currentHeight: this.optimizerContainer.offsetHeight
+        });
+        
+        this.optimizerContainer.classList.add('resizing');
+        
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+        
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isResizing) return;
+      
+      const deltaY = e.clientY - startY;
+      const newHeight = Math.max(300, Math.min(window.innerHeight * 0.8, startHeight + deltaY));
+      
+      console.log('调整大小中:', {
+        deltaY,
+        newHeight,
+        startHeight,
+        currentHeight: this.optimizerContainer.offsetHeight
+      });
+      
+      this.optimizerContainer.style.height = newHeight + 'px';
+      
+      // 调整内容区域
+      this.adjustContentArea(newHeight);
+    };
+
+    const handleMouseUp = () => {
+      if (isResizing) {
+        console.log('结束调整大小');
+        isResizing = false;
+        this.optimizerContainer.classList.remove('resizing');
+        
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+        
+        // 安全地保存新的大小
+        try {
+          this.savePluginSize();
+          console.log('插件大小已调整:', {
+            width: this.optimizerContainer.offsetWidth,
+            height: this.optimizerContainer.offsetHeight
+          });
+        } catch (error) {
+          console.log('保存插件大小失败:', error.message);
+        }
+      }
+    };
+
+    // 添加鼠标按下事件监听，使用捕获阶段
+    this.optimizerContainer.addEventListener('mousedown', handleMouseDown, true);
+    console.log('垂直拖拽调整事件监听器已添加');
   }
 
   adjustContentArea(containerHeight) {
-    // 获取内容区域 - 修复类名
+    // 获取内容区域
     const contentArea = this.optimizerContainer.querySelector('.optimizer-content');
     if (!contentArea) {
-      console.log('未找到内容区域，尝试其他选择器...');
-      // 尝试其他可能的选择器
-      const alternativeContent = this.optimizerContainer.querySelector('.ai-optimizer-content');
-      if (alternativeContent) {
-        console.log('找到替代内容区域');
-        this.adjustContentAreaElement(alternativeContent, containerHeight);
-      }
+      console.log('未找到内容区域');
       return;
     }
 
-    // 固定容器高度为400px，内容区域高度为300px（减去头部高度）
+    // 计算内容区域高度（减去头部高度）
     const headerHeight = 60; // 头部大约60px
-    const contentHeight = containerHeight - headerHeight;
+    const contentHeight = Math.max(200, containerHeight - headerHeight);
     
     console.log('调整内容区域:', {
       containerHeight,
@@ -933,41 +1017,30 @@ class AIImageOptimizer {
       contentHeight
     });
 
-    // 设置内容区域高度
-    contentArea.style.height = contentHeight + 'px';
+    // 简化高度设置，让 flex 布局自动处理
     contentArea.style.maxHeight = contentHeight + 'px';
-    contentArea.style.overflowY = 'auto';
-    contentArea.style.overflowX = 'hidden';
-
-    this.adjustContentAreaElement(contentArea, contentHeight);
-  }
-
-  adjustContentAreaElement(contentArea, containerHeight) {
-    // 使用flex布局，让内容区域自动适应
-    console.log('调整内容区域:', {
-      containerHeight,
-      contentAreaHeight: contentArea.offsetHeight,
-      scrollHeight: contentArea.scrollHeight
-    });
-
-    // 移除固定高度限制，让flex布局自动计算
-    contentArea.style.maxHeight = 'none';
-    contentArea.style.height = 'auto';
     
-    // 确保滚动功能正常工作
-    contentArea.style.overflowY = 'auto';
-    contentArea.style.overflowX = 'hidden';
-
-    // 检查是否需要滚动条
+    // 延迟检查是否需要滚动条
     setTimeout(() => {
-      if (contentArea.scrollHeight > contentArea.clientHeight) {
+      const scrollHeight = contentArea.scrollHeight;
+      const clientHeight = contentArea.clientHeight;
+      
+      console.log('内容区域尺寸检查:', {
+        scrollHeight,
+        clientHeight,
+        maxHeight: contentHeight,
+        needsScroll: scrollHeight > clientHeight
+      });
+      
+      // 只有当内容真正超出时才显示滚动条
+      if (scrollHeight > clientHeight) {
         contentArea.style.overflowY = 'auto';
         console.log('内容超出，显示滚动条');
       } else {
         contentArea.style.overflowY = 'hidden';
         console.log('内容未超出，隐藏滚动条');
       }
-    }, 100);
+    }, 50);
   }
 
   checkContainerScroll(containerWidth, containerHeight) {
@@ -1145,19 +1218,23 @@ class AIImageOptimizer {
   savePluginSize() {
     if (!this.optimizerContainer) return;
     
-    // 固定大小为600*400
-    const size = {
-      width: 600,
-      height: 400
-    };
-    
-    chrome.storage.local.set({ pluginSize: size });
-    console.log('插件固定大小已保存:', size);
+    try {
+      // 保存当前动态大小
+      const size = {
+        width: this.optimizerContainer.offsetWidth,
+        height: this.optimizerContainer.offsetHeight
+      };
+      
+      chrome.storage.local.set({ pluginSize: size });
+      console.log('插件动态大小已保存:', size);
+    } catch (error) {
+      console.log('保存插件大小失败，扩展上下文可能已失效:', error.message);
+    }
   }
 
   async restorePluginPosition() {
     try {
-      const data = await chrome.storage.local.get(['pluginPosition']);
+      const data = await chrome.storage.local.get(['pluginPosition', 'pluginSize']);
       
       if (data.pluginPosition && this.optimizerContainer) {
         this.optimizerContainer.style.transform = 'none';
@@ -1165,18 +1242,21 @@ class AIImageOptimizer {
         this.optimizerContainer.style.top = data.pluginPosition.top + 'px';
       }
       
-      // 确保使用固定大小
+      // 恢复保存的大小，如果没有保存的大小则使用默认值
       if (this.optimizerContainer) {
-        this.optimizerContainer.style.width = '600px';
-        this.optimizerContainer.style.height = '400px';
-        this.optimizerContainer.style.resize = 'none';
-        this.optimizerContainer.style.minWidth = '600px';
-        this.optimizerContainer.style.maxWidth = '600px';
-        this.optimizerContainer.style.minHeight = '400px';
-        this.optimizerContainer.style.maxHeight = '400px';
+        const savedSize = data.pluginSize || { width: 600, height: 400 };
+        this.optimizerContainer.style.width = savedSize.width + 'px';
+        this.optimizerContainer.style.height = savedSize.height + 'px';
+        this.optimizerContainer.style.minWidth = '400px';
+        this.optimizerContainer.style.maxWidth = '800px';
+        this.optimizerContainer.style.minHeight = '300px';
+        this.optimizerContainer.style.maxHeight = '80vh';
+        
+        // 调整内容区域
+        this.adjustContentArea(savedSize.height);
       }
     } catch (error) {
-      console.error('恢复插件位置失败:', error);
+      console.error('恢复插件位置和大小失败:', error);
     }
   }
 }

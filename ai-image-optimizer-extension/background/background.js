@@ -60,6 +60,10 @@ class AIOptimizerBackground {
         return await this.callGemini(prompt, settings.geminiApiKey);
       case 'local-ollama':
         return await this.callOllama(prompt, settings.ollamaModel || 'llama2');
+      case 'deepseek-chat':
+        return await this.callDeepSeek(prompt, settings.deepseekApiKey, 'deepseek-chat');
+      case 'deepseek-reasoner':
+        return await this.callDeepSeek(prompt, settings.deepseekApiKey, 'deepseek-reasoner');
       default:
         throw new Error('不支持的AI模型');
     }
@@ -192,12 +196,46 @@ class AIOptimizerBackground {
     }
   }
 
+  async callDeepSeek(prompt, apiKey, model) {
+    if (!apiKey) {
+      throw new Error('请在设置中配置DeepSeek API密钥');
+    }
+
+    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 500,
+        temperature: 0.7
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`DeepSeek API错误: ${error.error?.message || response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0]?.message?.content || '生成失败';
+  }
+
   async getSettings() {
     return new Promise((resolve) => {
       chrome.storage.local.get([
         'openaiApiKey',
         'claudeApiKey', 
         'geminiApiKey',
+        'deepseekApiKey',
         'ollamaModel',
         'defaultModel'
       ], (result) => {

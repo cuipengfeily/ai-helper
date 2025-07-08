@@ -32,6 +32,8 @@
               <option value="openai-free">ChatGPT - 需要API密钥</option>
               <option value="claude-free">Claude - 需要API密钥</option>
               <option value="gemini-free">Gemini - 需要API密钥</option>
+              <option value="deepseek-chat">DeepSeek Chat - 需要API密钥</option>
+              <option value="deepseek-reasoner">DeepSeek Reasoner - 需要API密钥</option>
             </select>
             <div class="setting-description">
               选择默认使用的AI模型。推荐本地模型，完全免费且保护隐私。
@@ -81,6 +83,17 @@
             </div>
             <div class="setting-description">
               获取地址: <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>
+            </div>
+          </div>
+
+          <div class="setting-group">
+            <label class="setting-label">DeepSeek API密钥</label>
+            <div class="input-group">
+              <input type="password" class="setting-input" id="deepseekApiKey" placeholder="sk-...">
+              <button type="button" class="toggle-password" data-target="deepseekApiKey">👁️</button>
+            </div>
+            <div class="setting-description">
+              获取地址: <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">DeepSeek Platform</a>
             </div>
           </div>
         </div>

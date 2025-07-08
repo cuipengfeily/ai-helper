@@ -75,7 +75,7 @@ class AIImageOptimizer {
   getDefaultConfig() {
     return {
       version: "1.0.0",
-      defaultModel: "openai-free",
+      defaultModel: "local-ollama",
       categories: [
         {
           "key": "style",
@@ -454,11 +454,6 @@ class AIImageOptimizer {
           </div>
         </div>
       </div>
-      
-      <div class="optimizer-loading" id="optimizerLoading" style="display: none;">
-        <div class="loading-spinner"></div>
-        <span>正在优化描述...</span>
-      </div>
     `;
   }
 
@@ -534,7 +529,7 @@ class AIImageOptimizer {
   initializeDropdowns() {
     try {
       // 从存储中恢复用户之前的选择
-      chrome.storage.local.get(['userPreferences'], (result) => {
+      chrome.storage.local.get(['userPreferences', 'defaultModel'], (result) => {
         if (result.userPreferences) {
           Object.entries(result.userPreferences).forEach(([key, value]) => {
             const select = document.querySelector(`[data-category="${key}"]`);
@@ -542,6 +537,15 @@ class AIImageOptimizer {
               select.value = value;
             }
           });
+        }
+        
+        // 设置默认AI模型
+        const modelSelect = document.getElementById('aiModelSelect');
+        if (modelSelect) {
+          modelSelect.value = result.defaultModel || 'local-ollama';
+          console.log('设置默认AI模型:', modelSelect.value);
+        } else {
+          console.error('找不到AI模型选择器');
         }
       });
 
@@ -573,17 +577,15 @@ class AIImageOptimizer {
 
   async optimizeDescription() {
     try {
-      const loadingEl = document.getElementById('optimizerLoading');
       const resultEl = document.getElementById('optimizedResult');
       
-      if (!loadingEl || !resultEl) {
-        console.error('找不到必要的UI元素');
+      if (!resultEl) {
+        console.error('找不到结果文本框');
         return;
       }
       
-      // 显示加载状态
-      loadingEl.style.display = 'flex';
-      resultEl.value = '';
+      // 清空结果
+      resultEl.value = '正在优化中，请稍候...';
 
       // 获取原始描述
       const originalText = this.originalInput ? this.originalInput.value.trim() : '';
@@ -593,6 +595,8 @@ class AIImageOptimizer {
       
       // 构建提示词
       const prompt = this.buildPrompt(originalText, features);
+      
+      console.log('发送到AI的提示词:', prompt);
       
       // 调用AI API
       const result = await this.callAI(prompt);
@@ -605,11 +609,6 @@ class AIImageOptimizer {
       const resultEl = document.getElementById('optimizedResult');
       if (resultEl) {
         resultEl.value = '优化失败，请检查网络连接或API配置。错误: ' + error.message;
-      }
-    } finally {
-      const loadingEl = document.getElementById('optimizerLoading');
-      if (loadingEl) {
-        loadingEl.style.display = 'none';
       }
     }
   }
@@ -656,11 +655,24 @@ class AIImageOptimizer {
 
   async callAI(prompt) {
     return new Promise((resolve, reject) => {
+      // 获取AI模型选择器
+      const modelSelect = document.getElementById('aiModelSelect');
+      if (!modelSelect) {
+        reject(new Error('找不到AI模型选择器'));
+        return;
+      }
+      
+      const modelId = modelSelect.value;
+      if (!modelId) {
+        reject(new Error('请选择AI模型'));
+        return;
+      }
+      
       // 向background script发送消息
       chrome.runtime.sendMessage({
         action: 'optimizeDescription',
         prompt: prompt,
-        modelId: document.getElementById('aiModelSelect').value
+        modelId: modelId
       }, (response) => {
         if (chrome.runtime.lastError) {
           reject(new Error(chrome.runtime.lastError.message));
@@ -896,8 +908,6 @@ class AIImageOptimizer {
     
     console.log('插件大小已固定为600*400像素');
   }
-
-
 
   adjustContentArea(containerHeight) {
     // 获取内容区域 - 修复类名

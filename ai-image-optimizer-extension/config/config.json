@@ -137,6 +137,22 @@
       "free": true,
       "needsApiKey": false,
       "description": "使用本地部署的Ollama模型"
+    },
+    {
+      "id": "deepseek-chat",
+      "name": "DeepSeek Chat",
+      "apiUrl": "https://api.deepseek.com/v1/chat/completions",
+      "free": false,
+      "needsApiKey": true,
+      "description": "使用DeepSeek的Chat模型 (DeepSeek-V3-0324)"
+    },
+    {
+      "id": "deepseek-reasoner",
+      "name": "DeepSeek Reasoner",
+      "apiUrl": "https://api.deepseek.com/v1/chat/completions",
+      "free": false,
+      "needsApiKey": true,
+      "description": "使用DeepSeek的Reasoner模型 (DeepSeek-R1-0528)"
     }
   ],
   "prompts": {

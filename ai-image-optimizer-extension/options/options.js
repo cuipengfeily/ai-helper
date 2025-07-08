@@ -18,6 +18,7 @@ class OptionsManager {
         'openaiApiKey',
         'claudeApiKey',
         'geminiApiKey',
+        'deepseekApiKey',
         'ollamaModel',
         'ollamaUrl',
         'autoApplyResult',
@@ -33,6 +34,7 @@ class OptionsManager {
       document.getElementById('openaiApiKey').value = settings.openaiApiKey || '';
       document.getElementById('claudeApiKey').value = settings.claudeApiKey || '';
       document.getElementById('geminiApiKey').value = settings.geminiApiKey || '';
+      document.getElementById('deepseekApiKey').value = settings.deepseekApiKey || '';
       document.getElementById('ollamaModel').value = settings.ollamaModel || 'llama2';
       document.getElementById('ollamaUrl').value = settings.ollamaUrl || 'http://localhost:11434';
       document.getElementById('autoApplyResult').checked = settings.autoApplyResult || false;
@@ -187,6 +189,7 @@ class OptionsManager {
         openaiApiKey: document.getElementById('openaiApiKey').value,
         claudeApiKey: document.getElementById('claudeApiKey').value,
         geminiApiKey: document.getElementById('geminiApiKey').value,
+        deepseekApiKey: document.getElementById('deepseekApiKey').value,
         ollamaModel: document.getElementById('ollamaModel').value,
         ollamaUrl: document.getElementById('ollamaUrl').value,
         autoApplyResult: document.getElementById('autoApplyResult').checked,

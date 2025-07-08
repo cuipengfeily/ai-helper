@@ -590,8 +590,10 @@ class AIImageOptimizer {
       // 清空结果
       resultEl.value = '正在优化中，请稍候...';
 
-      // 获取原始描述
-      const originalText = this.originalInput ? this.originalInput.value.trim() : '';
+      // 重新获取网页输入框的当前内容
+      const originalText = this.getCurrentWebInputContent();
+      
+      console.log('获取到的网页输入内容:', originalText);
       
       // 获取用户选择的特征
       const features = this.getSelectedFeatures();
@@ -614,6 +616,46 @@ class AIImageOptimizer {
         resultEl.value = '优化失败，请检查网络连接或API配置。错误: ' + error.message;
       }
     }
+  }
+
+  getCurrentWebInputContent() {
+    // 重新查找网页中的输入框
+    const selectors = [
+      'textarea[placeholder*="输入"]',
+      'textarea[placeholder*="描述"]',
+      'textarea[placeholder*="prompt"]',
+      'input[placeholder*="输入"]',
+      'input[placeholder*="描述"]',
+      'input[placeholder*="prompt"]',
+      '.input-area textarea',
+      '.prompt-input',
+      '[class*="input"] textarea',
+      '[id*="input"] textarea',
+      'textarea',
+      'input[type="text"]'
+    ];
+
+    for (const selector of selectors) {
+      const elements = document.querySelectorAll(selector);
+      for (const element of elements) {
+        // 检查元素是否可见且可编辑
+        if (this.isElementVisible(element) && this.isElementEditable(element)) {
+          const content = element.value.trim();
+          console.log('找到网页输入框:', selector, '内容:', content);
+          return content;
+        }
+      }
+    }
+
+    // 如果找不到新的输入框，使用原来的
+    if (this.originalInput) {
+      const content = this.originalInput.value.trim();
+      console.log('使用原始输入框内容:', content);
+      return content;
+    }
+
+    console.log('未找到任何输入框');
+    return '';
   }
 
   getSelectedFeatures() {

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>滚动条调试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .debug-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .debug-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .debug-button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .debug-button:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        
+        .debug-button.success {
+            background: #28a745;
+        }
+        
+        .debug-button.success:hover {
+            background: #218838;
+        }
+        
+        .debug-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        
+        .test-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 20px 0;
+            resize: vertical;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background: #28a745;
+        }
+        
+        .status-error {
+            background: #dc3545;
+        }
+        
+        .status-warning {
+            background: #ffc107;
+        }
+        
+        .status-info {
+            background: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1 class="test-title">滚动条调试工具</h1>
+        
+        <div class="debug-section">
+            <h3>问题诊断</h3>
+            <p>这个页面用于诊断为什么插件容器没有显示滚动条。</p>
+            <ul>
+                <li>检查插件容器的CSS设置</li>
+                <li>强制显示滚动条</li>
+                <li>测试不同的overflow设置</li>
+                <li>验证内容高度计算</li>
+            </ul>
+        </div>
+        
+        <textarea 
+            class="test-input" 
+            placeholder="这是一个测试输入框，用于触发插件的显示..."
+        >请在这里输入一些内容，然后观察插件的行为。插件应该能够识别到这个输入框并显示在页面上。</textarea>
+        
+        <div style="text-align: center;">
+            <button class="debug-button" onclick="checkPluginStatus()">检查插件状态</button>
+            <button class="debug-button" onclick="forceScroll()">强制显示滚动条</button>
+            <button class="debug-button" onclick="testSmallSize()">测试小尺寸</button>
+            <button class="debug-button success" onclick="injectTestCSS()">注入测试CSS</button>
+        </div>
+        
+        <div class="debug-output">
+            <h4>调试输出</h4>
+            <div id="debugOutput">
+                <div>等待插件加载...</div>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>调试步骤</h3>
+            <ol>
+                <li>点击"检查插件状态"查看当前插件信息</li>
+                <li>点击"测试小尺寸"将插件调整到小尺寸</li>
+                <li>点击"强制显示滚动条"尝试强制显示</li>
+                <li>点击"注入测试CSS"添加额外的滚动条样式</li>
+                <li>观察调试输出中的信息</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('debugOutput');
+            const logElement = document.createElement('div');
+            logElement.style.margin = '5px 0';
+            logElement.style.padding = '5px';
+            logElement.style.borderRadius = '3px';
+            
+            const statusIndicator = document.createElement('span');
+            statusIndicator.className = `status-indicator status-${type}`;
+            
+            logElement.appendChild(statusIndicator);
+            logElement.appendChild(document.createTextNode(`[${new Date().toLocaleTimeString()}] ${message}`));
+            
+            output.appendChild(logElement);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function checkPluginStatus() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            const rect = plugin.getBoundingClientRect();
+            const computedStyle = window.getComputedStyle(plugin);
+            
+            log(`插件尺寸: ${rect.width}px × ${rect.height}px`, 'info');
+            log(`插件位置: left=${rect.left}px, top=${rect.top}px`, 'info');
+            log(`overflow设置: ${computedStyle.overflow}`, 'info');
+            log(`overflow-y设置: ${computedStyle.overflowY}`, 'info');
+            log(`display设置: ${computedStyle.display}`, 'info');
+            log(`scrollHeight: ${plugin.scrollHeight}px`, 'info');
+            log(`clientHeight: ${plugin.clientHeight}px`, 'info');
+            log(`offsetHeight: ${plugin.offsetHeight}px`, 'info');
+            
+            const hasScroll = plugin.scrollHeight > plugin.clientHeight;
+            if (hasScroll) {
+                log('内容超出，应该显示滚动条', 'success');
+            } else {
+                log('内容未超出，不需要滚动条', 'warning');
+            }
+        }
+
+        function forceScroll() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            log('尝试强制显示滚动条...', 'info');
+            
+            // 强制设置滚动
+            plugin.style.overflow = 'auto';
+            plugin.style.overflowY = 'auto';
+            plugin.style.overflowX = 'hidden';
+            
+            // 设置最小高度确保内容超出
+            plugin.style.minHeight = '600px';
+            
+            log('已设置 overflow: auto', 'success');
+            log('已设置 minHeight: 600px', 'success');
+            
+            setTimeout(() => {
+                checkPluginStatus();
+            }, 100);
+        }
+
+        function testSmallSize() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            log('将插件调整到小尺寸...', 'info');
+            
+            plugin.style.width = '300px';
+            plugin.style.height = '400px';
+            
+            log('已设置尺寸: 300px × 400px', 'success');
+            
+            setTimeout(() => {
+                checkPluginStatus();
+            }, 100);
+        }
+
+        function injectTestCSS() {
+            log('注入测试CSS...', 'info');
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                #ai-image-optimizer {
+                    overflow: auto !important;
+                    overflow-y: auto !important;
+                    overflow-x: hidden !important;
+                }
+                
+                #ai-image-optimizer::-webkit-scrollbar {
+                    width: 12px !important;
+                    background: red !important;
+                }
+                
+                #ai-image-optimizer::-webkit-scrollbar-track {
+                    background: rgba(255, 0, 0, 0.3) !important;
+                }
+                
+                #ai-image-optimizer::-webkit-scrollbar-thumb {
+                    background: rgba(255, 0, 0, 0.8) !important;
+                    border-radius: 6px !important;
+                }
+                
+                #ai-image-optimizer::-webkit-scrollbar-thumb:hover {
+                    background: rgba(255, 0, 0, 1) !important;
+                }
+            `;
+            
+            document.head.appendChild(style);
+            log('已注入红色滚动条CSS', 'success');
+            
+            setTimeout(() => {
+                checkPluginStatus();
+            }, 100);
+        }
+
+        // 页面加载完成后自动检查
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const plugin = document.getElementById('ai-image-optimizer');
+                if (plugin) {
+                    log('插件已加载，开始调试', 'success');
+                    checkPluginStatus();
+                } else {
+                    log('插件未找到，请确保插件已启用', 'error');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html> 

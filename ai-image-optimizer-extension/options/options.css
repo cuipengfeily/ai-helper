@@ -490,3 +490,58 @@ body {
     border-color: #4a5568;
   }
 }
+
+/* 分析结果样式 */
+.analysis-result {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  background: #f8f9fa;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.analysis-result.success {
+  border-color: #28a745;
+  background: #d4edda;
+}
+
+.analysis-result.error {
+  border-color: #dc3545;
+  background: #f8d7da;
+}
+
+.analysis-items {
+  margin-top: 12px;
+}
+
+.analysis-item {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.analysis-item:last-child {
+  margin-bottom: 0;
+}
+
+.analysis-item strong {
+  color: #2c3e50;
+}
+
+.analysis-item small {
+  color: #6c757d;
+  font-size: 11px;
+}
+
+.analysis-item h5 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: 600;
+}

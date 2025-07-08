@@ -22,7 +22,10 @@ class OptionsManager {
         'ollamaUrl',
         'autoApplyResult',
         'saveHistory',
-        'maxHistoryCount'
+        'maxHistoryCount',
+        'insertPosition',
+        'displayMode',
+        'customSelector'
       ]);
 
       // 设置默认值
@@ -35,6 +38,9 @@ class OptionsManager {
       document.getElementById('autoApplyResult').checked = settings.autoApplyResult || false;
       document.getElementById('saveHistory').checked = settings.saveHistory !== false; // 默认为true
       document.getElementById('maxHistoryCount').value = settings.maxHistoryCount || 50;
+      document.getElementById('insertPosition').value = settings.insertPosition || 'body-top';
+      document.getElementById('displayMode').value = settings.displayMode || 'fixed'; // 默认固定定位（悬浮显示）
+      document.getElementById('customSelector').value = settings.customSelector || '';
 
     } catch (error) {
       console.error('加载设置失败:', error);
@@ -116,6 +122,20 @@ class OptionsManager {
     document.getElementById('defaultModel').addEventListener('change', () => {
       this.saveSettings(false); // 不显示提示
     });
+
+    // 插件显示设置
+    document.getElementById('insertPosition').addEventListener('change', () => {
+      this.handleInsertPositionChange();
+    });
+
+    document.getElementById('analyzePage').addEventListener('click', () => {
+      this.analyzeCurrentPage();
+    });
+
+    // 添加应用设置按钮事件
+    document.getElementById('applySettings').addEventListener('click', () => {
+      this.applySettingsToCurrentPage();
+    });
   }
 
   async testOllamaConnection() {
@@ -171,7 +191,10 @@ class OptionsManager {
         ollamaUrl: document.getElementById('ollamaUrl').value,
         autoApplyResult: document.getElementById('autoApplyResult').checked,
         saveHistory: document.getElementById('saveHistory').checked,
-        maxHistoryCount: parseInt(document.getElementById('maxHistoryCount').value)
+        maxHistoryCount: parseInt(document.getElementById('maxHistoryCount').value),
+        insertPosition: document.getElementById('insertPosition').value,
+        displayMode: document.getElementById('displayMode').value,
+        customSelector: document.getElementById('customSelector').value
       };
 
       await chrome.storage.local.set(settings);
@@ -322,6 +345,289 @@ class OptionsManager {
     return new Promise((resolve) => {
       chrome.storage.local.get(keys, resolve);
     });
+  }
+
+  handleInsertPositionChange() {
+    const insertPosition = document.getElementById('insertPosition').value;
+    const customSelectorGroup = document.getElementById('customSelectorGroup');
+    
+    if (insertPosition === 'custom') {
+      customSelectorGroup.style.display = 'block';
+    } else {
+      customSelectorGroup.style.display = 'none';
+    }
+  }
+
+  async analyzeCurrentPage() {
+    const resultEl = document.getElementById('pageAnalysisResult');
+    const analyzeBtn = document.getElementById('analyzePage');
+    
+    // 显示加载状态
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = '🔄 分析中...';
+    resultEl.className = 'analysis-result';
+    resultEl.style.display = 'none';
+
+    try {
+      // 获取当前活动标签页
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      
+      if (!tab) {
+        throw new Error('无法获取当前标签页');
+      }
+
+      console.log('当前标签页:', tab);
+
+      // 检查是否有权限访问该页面
+      if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')) {
+        throw new Error('无法分析此页面，请在目标网站上打开设置页面');
+      }
+
+      // 在目标页面执行分析脚本
+      const results = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: this.analyzePageStructure
+      });
+
+      if (results && results[0] && results[0].result) {
+        const analysis = results[0].result;
+        this.displayPageAnalysis(analysis);
+      } else {
+        throw new Error('页面分析失败');
+      }
+
+    } catch (error) {
+      console.error('页面分析错误:', error);
+      resultEl.className = 'analysis-result error';
+      resultEl.innerHTML = `
+        <h4>❌ 分析失败</h4>
+        <p>错误信息: ${error.message}</p>
+        <p>请确保您在目标网站上打开此设置页面。</p>
+        <p>当前页面URL: ${window.location.href}</p>
+      `;
+    } finally {
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = '🔍 分析当前页面结构';
+      resultEl.style.display = 'block';
+    }
+  }
+
+  analyzePageStructure() {
+    const analysis = {
+      url: window.location.href,
+      title: document.title,
+      inputElements: [],
+      containerElements: [],
+      bodyStructure: []
+    };
+
+    // 查找输入框元素
+    const inputs = document.querySelectorAll('textarea, input[type="text"], input[placeholder*="输入"], input[placeholder*="描述"]');
+    inputs.forEach((input, index) => {
+      const rect = input.getBoundingClientRect();
+      analysis.inputElements.push({
+        index: index + 1,
+        tagName: input.tagName,
+        id: input.id || '',
+        className: input.className || '',
+        placeholder: input.placeholder || '',
+        visible: rect.width > 0 && rect.height > 0,
+        position: {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height
+        },
+        parentPath: this.getElementPath(input.parentElement)
+      });
+    });
+
+    // 查找主要容器元素
+    const containers = document.querySelectorAll('main, .main, #main, .container, .content, [class*="container"], [class*="content"]');
+    containers.forEach((container, index) => {
+      const rect = container.getBoundingClientRect();
+      analysis.containerElements.push({
+        index: index + 1,
+        tagName: container.tagName,
+        id: container.id || '',
+        className: container.className || '',
+        visible: rect.width > 0 && rect.height > 0,
+        position: {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height
+        },
+        path: this.getElementPath(container)
+      });
+    });
+
+    // 分析body结构（前5层）
+    analysis.bodyStructure = this.analyzeBodyStructure(document.body, 0, 5);
+
+    return analysis;
+  }
+
+  getElementPath(element, maxDepth = 10) {
+    const path = [];
+    let current = element;
+    let depth = 0;
+
+    while (current && current !== document.body && depth < maxDepth) {
+      let selector = current.tagName.toLowerCase();
+      
+      if (current.id) {
+        selector += `#${current.id}`;
+      } else if (current.className) {
+        const classes = current.className.split(' ').filter(c => c.trim()).slice(0, 2);
+        if (classes.length > 0) {
+          selector += `.${classes.join('.')}`;
+        }
+      }
+
+      path.unshift(selector);
+      current = current.parentElement;
+      depth++;
+    }
+
+    return path.join(' > ');
+  }
+
+  analyzeBodyStructure(element, depth, maxDepth) {
+    if (depth >= maxDepth || !element) {
+      return [];
+    }
+
+    const structure = [];
+    const children = Array.from(element.children).slice(0, 10); // 只分析前10个子元素
+
+    children.forEach((child, index) => {
+      const rect = child.getBoundingClientRect();
+      structure.push({
+        depth: depth + 1,
+        index: index + 1,
+        tagName: child.tagName,
+        id: child.id || '',
+        className: child.className || '',
+        visible: rect.width > 0 && rect.height > 0,
+        hasChildren: child.children.length > 0,
+        path: this.getElementPath(child)
+      });
+    });
+
+    return structure;
+  }
+
+  displayPageAnalysis(analysis) {
+    const resultEl = document.getElementById('pageAnalysisResult');
+    
+    let html = `
+      <h4>📊 页面分析结果</h4>
+      <p><strong>页面:</strong> ${analysis.title}</p>
+      <p><strong>URL:</strong> ${analysis.url}</p>
+    `;
+
+    // 显示输入框信息
+    if (analysis.inputElements.length > 0) {
+      html += `
+        <h5>📝 找到的输入框 (${analysis.inputElements.length}个)</h5>
+        <div class="analysis-items">
+      `;
+      
+      analysis.inputElements.forEach(input => {
+        html += `
+          <div class="analysis-item">
+            <strong>输入框 ${input.index}:</strong> ${input.tagName}
+            ${input.id ? `#${input.id}` : ''}
+            ${input.className ? `.${input.className.split(' ')[0]}` : ''}
+            ${input.placeholder ? `[placeholder="${input.placeholder}"]` : ''}
+            <br>
+            <small>位置: ${input.parentPath}</small>
+            <br>
+            <small>可见: ${input.visible ? '✅' : '❌'}</small>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+    } else {
+      html += '<p>❌ 未找到输入框元素</p>';
+    }
+
+    // 显示容器信息
+    if (analysis.containerElements.length > 0) {
+      html += `
+        <h5>📦 主要容器 (${analysis.containerElements.length}个)</h5>
+        <div class="analysis-items">
+      `;
+      
+      analysis.containerElements.forEach(container => {
+        html += `
+          <div class="analysis-item">
+            <strong>容器 ${container.index}:</strong> ${container.tagName}
+            ${container.id ? `#${container.id}` : ''}
+            ${container.className ? `.${container.className.split(' ')[0]}` : ''}
+            <br>
+            <small>路径: ${container.path}</small>
+            <br>
+            <small>可见: ${container.visible ? '✅' : '❌'}</small>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+    }
+
+    // 显示body结构
+    html += `
+      <h5>🌳 Body结构 (前5层)</h5>
+      <div class="analysis-items">
+    `;
+    
+    analysis.bodyStructure.forEach(item => {
+      const indent = '&nbsp;'.repeat(item.depth * 4);
+      html += `
+        <div class="analysis-item">
+          ${indent}${item.tagName}
+          ${item.id ? `#${item.id}` : ''}
+          ${item.className ? `.${item.className.split(' ')[0]}` : ''}
+          ${item.hasChildren ? ' (有子元素)' : ''}
+          <br>
+          <small>${indent}路径: ${item.path}</small>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+
+    resultEl.className = 'analysis-result success';
+    resultEl.innerHTML = html;
+  }
+
+  async applySettingsToCurrentPage() {
+    try {
+      // 获取当前活动标签页
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      
+      if (!tab) {
+        throw new Error('无法获取当前标签页');
+      }
+
+      // 检查是否在目标网站上
+      if (!tab.url || !tab.url.includes('jimeng.jianying.com')) {
+        this.showToast('请在剪映AI工具网站上使用此功能', 'error');
+        return;
+      }
+
+      // 向内容脚本发送消息，要求重新应用设置
+      await chrome.tabs.sendMessage(tab.id, { action: 'reapplySettings' });
+      
+      this.showToast('设置已应用到当前页面', 'success');
+      
+    } catch (error) {
+      console.error('应用设置失败:', error);
+      this.showToast('应用设置失败: ' + error.message, 'error');
+    }
   }
 }
 

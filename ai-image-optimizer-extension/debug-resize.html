@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插件调整大小调试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .debug-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        
+        .debug-info h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .debug-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .debug-info li {
+            margin: 8px 0;
+            color: #666;
+        }
+        
+        .test-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 20px 0;
+            resize: vertical;
+        }
+        
+        .debug-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .debug-button:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        .debug-button.secondary {
+            background: #6c757d;
+        }
+        
+        .debug-button.secondary:hover {
+            background: #545b62;
+        }
+        
+        .console-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        
+        .console-output h4 {
+            margin-top: 0;
+            color: #68d391;
+        }
+        
+        .console-output .log {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .console-output .log.info {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+        
+        .console-output .log.success {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
+        
+        .console-output .log.error {
+            background: rgba(245, 101, 101, 0.2);
+            color: #f56565;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1 class="debug-title">AI图片描述优化助手 - 调整大小功能调试</h1>
+        
+        <div class="debug-info">
+            <h3>调试说明</h3>
+            <ul>
+                <li>这个页面用于调试插件的调整大小功能</li>
+                <li>插件应该显示在页面右上角</li>
+                <li>右下角有调整大小手柄（↘图标）</li>
+                <li>拖拽手柄可以调整整个插件容器的大小</li>
+                <li>调整大小时会显示调试信息</li>
+            </ul>
+        </div>
+        
+        <div class="debug-info">
+            <h3>测试步骤</h3>
+            <ol>
+                <li>确保插件已安装并启用</li>
+                <li>刷新页面，插件应该出现在右上角</li>
+                <li>找到右下角的调整大小手柄</li>
+                <li>拖拽手柄调整插件大小</li>
+                <li>观察控制台输出的调试信息</li>
+                <li>验证整个插件容器是否在调整大小</li>
+            </ol>
+        </div>
+        
+        <textarea 
+            class="test-input" 
+            placeholder="这是一个测试输入框，用于触发插件的显示..."
+        >请在这里输入一些内容，然后观察插件的行为。插件应该能够识别到这个输入框并显示在页面上。</textarea>
+        
+        <div style="text-align: center;">
+            <button class="debug-button" onclick="location.reload()">刷新页面</button>
+            <button class="debug-button secondary" onclick="clearConsole()">清空控制台</button>
+            <button class="debug-button secondary" onclick="checkPluginSize()">检查插件尺寸</button>
+        </div>
+        
+        <div class="console-output">
+            <h4>调试控制台</h4>
+            <div id="consoleLogs">
+                <div class="log info">等待插件加载...</div>
+            </div>
+        </div>
+        
+        <div class="debug-info">
+            <h3>预期行为</h3>
+            <ul>
+                <li>插件容器应该能够水平和垂直调整大小</li>
+                <li>调整大小时应该显示调试信息</li>
+                <li>内容区域应该自动适应新的容器高度</li>
+                <li>当内容超出时应该显示滚动条</li>
+                <li>调整大小有最小和最大限制</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 模拟控制台输出
+        function logToConsole(message, type = 'info') {
+            const consoleLogs = document.getElementById('consoleLogs');
+            const logElement = document.createElement('div');
+            logElement.className = `log ${type}`;
+            logElement.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleLogs.appendChild(logElement);
+            consoleLogs.scrollTop = consoleLogs.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById('consoleLogs').innerHTML = '<div class="log info">控制台已清空</div>';
+        }
+
+        function checkPluginSize() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (plugin) {
+                const rect = plugin.getBoundingClientRect();
+                logToConsole(`插件尺寸: ${rect.width}px × ${rect.height}px`, 'success');
+                logToConsole(`插件位置: left=${rect.left}px, top=${rect.top}px`, 'info');
+            } else {
+                logToConsole('未找到插件元素', 'error');
+            }
+        }
+
+        // 监听插件相关事件
+        window.addEventListener('load', () => {
+            logToConsole('页面加载完成，等待插件初始化...', 'info');
+            
+            // 定期检查插件状态
+            setTimeout(() => {
+                const plugin = document.getElementById('ai-image-optimizer');
+                if (plugin) {
+                    logToConsole('插件已加载', 'success');
+                    checkPluginSize();
+                } else {
+                    logToConsole('插件未找到，请确保插件已启用', 'error');
+                }
+            }, 2000);
+        });
+
+        // 监听控制台消息
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            if (args[0] && typeof args[0] === 'string' && args[0].includes('调整插件大小')) {
+                logToConsole(args.join(' '), 'info');
+            }
+        };
+        
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            logToConsole(args.join(' '), 'error');
+        };
+    </script>
+</body>
+</html> 

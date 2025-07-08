@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调整大小功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .test-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .test-button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
+        }
+        
+        .test-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 20px 0;
+            resize: vertical;
+        }
+        
+        .debug-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background: #4caf50;
+        }
+        
+        .status-error {
+            background: #f44336;
+        }
+        
+        .status-warning {
+            background: #ff9800;
+        }
+        
+        .status-info {
+            background: #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">调整大小功能测试</h1>
+        
+        <div class="test-info">
+            <h3>测试说明</h3>
+            <p>这个页面用于测试插件的调整大小功能。</p>
+            <ul>
+                <li>插件应该显示在页面右上角</li>
+                <li>右下角应该有一个白色的调整大小手柄</li>
+                <li>拖拽手柄可以调整插件大小</li>
+                <li>调整后应该能继续调整</li>
+            </ul>
+        </div>
+        
+        <textarea 
+            class="test-input" 
+            placeholder="这是一个测试输入框，用于触发插件的显示..."
+        >请在这里输入一些内容，然后观察插件的行为。插件应该能够识别到这个输入框并显示在页面上。</textarea>
+        
+        <div style="text-align: center;">
+            <button class="test-button" onclick="checkResizeHandle()">检查调整大小手柄</button>
+            <button class="test-button" onclick="testResize()">测试调整大小</button>
+            <button class="test-button" onclick="forceResizeHandle()">强制创建手柄</button>
+            <button class="test-button" onclick="debugPlugin()">调试插件状态</button>
+        </div>
+        
+        <div class="debug-output">
+            <h4>调试输出</h4>
+            <div id="debugOutput">
+                <div>等待插件加载...</div>
+            </div>
+        </div>
+        
+        <div class="test-info">
+            <h3>预期结果</h3>
+            <ul>
+                <li>插件右下角显示白色调整大小手柄</li>
+                <li>手柄可以正常拖拽</li>
+                <li>调整大小后手柄仍然可用</li>
+                <li>插件大小在合理范围内</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('debugOutput');
+            const logElement = document.createElement('div');
+            logElement.style.margin = '5px 0';
+            logElement.style.padding = '5px';
+            logElement.style.borderRadius = '3px';
+            
+            const statusIndicator = document.createElement('span');
+            statusIndicator.className = `status-indicator status-${type}`;
+            
+            logElement.appendChild(statusIndicator);
+            logElement.appendChild(document.createTextNode(`[${new Date().toLocaleTimeString()}] ${message}`));
+            
+            output.appendChild(logElement);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function checkResizeHandle() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            const handle = plugin.querySelector('.resize-handle');
+            if (!handle) {
+                log('未找到调整大小手柄', 'error');
+                return;
+            }
+
+            const rect = handle.getBoundingClientRect();
+            const style = window.getComputedStyle(handle);
+            
+            log(`调整大小手柄状态:`, 'info');
+            log(`- 位置: ${rect.left}, ${rect.top}`, 'info');
+            log(`- 尺寸: ${rect.width}px × ${rect.height}px`, 'info');
+            log(`- z-index: ${style.zIndex}`, 'info');
+            log(`- pointer-events: ${style.pointerEvents}`, 'info');
+            log(`- display: ${style.display}`, 'info');
+            log(`- position: ${style.position}`, 'info');
+            
+            if (rect.width > 0 && rect.height > 0) {
+                log('调整大小手柄可见且可用', 'success');
+            } else {
+                log('调整大小手柄不可见', 'error');
+            }
+        }
+
+        function testResize() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            const handle = plugin.querySelector('.resize-handle');
+            if (!handle) {
+                log('未找到调整大小手柄', 'error');
+                return;
+            }
+
+            log('开始测试调整大小...', 'info');
+            
+            // 记录原始尺寸
+            const originalWidth = plugin.offsetWidth;
+            const originalHeight = plugin.offsetHeight;
+            
+            log(`原始尺寸: ${originalWidth}px × ${originalHeight}px`, 'info');
+            
+            // 模拟拖拽调整大小
+            const rect = handle.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // 创建鼠标事件
+            const mousedownEvent = new MouseEvent('mousedown', {
+                clientX: centerX,
+                clientY: centerY,
+                bubbles: true
+            });
+            
+            const mousemoveEvent = new MouseEvent('mousemove', {
+                clientX: centerX + 50,
+                clientY: centerY + 50,
+                bubbles: true
+            });
+            
+            const mouseupEvent = new MouseEvent('mouseup', {
+                clientX: centerX + 50,
+                clientY: centerY + 50,
+                bubbles: true
+            });
+            
+            // 触发事件
+            handle.dispatchEvent(mousedownEvent);
+            document.dispatchEvent(mousemoveEvent);
+            document.dispatchEvent(mouseupEvent);
+            
+            setTimeout(() => {
+                const newWidth = plugin.offsetWidth;
+                const newHeight = plugin.offsetHeight;
+                
+                log(`调整后尺寸: ${newWidth}px × ${newHeight}px`, 'info');
+                
+                if (newWidth !== originalWidth || newHeight !== originalHeight) {
+                    log('调整大小测试成功', 'success');
+                } else {
+                    log('调整大小测试失败', 'error');
+                }
+            }, 100);
+        }
+
+        function forceResizeHandle() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            log('强制创建调整大小手柄...', 'info');
+            
+            // 移除现有手柄
+            const existingHandle = plugin.querySelector('.resize-handle');
+            if (existingHandle) {
+                existingHandle.remove();
+            }
+            
+            // 创建新手柄
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'resize-handle';
+            resizeHandle.innerHTML = '↘';
+            resizeHandle.title = '拖拽调整大小';
+            
+            Object.assign(resizeHandle.style, {
+                position: 'absolute',
+                bottom: '0',
+                right: '0',
+                width: '24px',
+                height: '24px',
+                cursor: 'se-resize',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                borderRadius: '0 0 12px 0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                color: 'white',
+                zIndex: '100000',
+                border: '2px solid rgba(255, 255, 255, 0.8)',
+                pointerEvents: 'auto',
+                userSelect: 'none'
+            });
+            
+            plugin.appendChild(resizeHandle);
+            
+            // 绑定事件
+            let isResizing = false;
+            let startX, startY, startWidth, startHeight;
+            
+            const handleMouseDown = (e) => {
+                log('调整大小手柄被点击', 'success');
+                isResizing = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startWidth = plugin.offsetWidth;
+                startHeight = plugin.offsetHeight;
+                
+                document.addEventListener('mousemove', onResizeMove);
+                document.addEventListener('mouseup', onResizeUp);
+                
+                e.preventDefault();
+                e.stopPropagation();
+            };
+            
+            const onResizeMove = (e) => {
+                if (!isResizing) return;
+                
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                
+                const newWidth = Math.max(300, Math.min(600, startWidth + deltaX));
+                const newHeight = Math.max(400, Math.min(window.innerHeight * 0.8, startHeight + deltaY));
+                
+                plugin.style.width = newWidth + 'px';
+                plugin.style.height = newHeight + 'px';
+            };
+            
+            const onResizeUp = () => {
+                isResizing = false;
+                document.removeEventListener('mousemove', onResizeMove);
+                document.removeEventListener('mouseup', onResizeUp);
+                log('调整大小完成', 'success');
+            };
+            
+            resizeHandle.addEventListener('mousedown', handleMouseDown);
+            
+            log('调整大小手柄已重新创建', 'success');
+        }
+
+        function debugPlugin() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            const rect = plugin.getBoundingClientRect();
+            const style = window.getComputedStyle(plugin);
+            
+            log('插件状态:', 'info');
+            log(`- 位置: ${rect.left}, ${rect.top}`, 'info');
+            log(`- 尺寸: ${rect.width}px × ${rect.height}px`, 'info');
+            log(`- z-index: ${style.zIndex}`, 'info');
+            log(`- position: ${style.position}`, 'info');
+            log(`- overflow: ${style.overflow}`, 'info');
+            
+            const handle = plugin.querySelector('.resize-handle');
+            if (handle) {
+                const handleRect = handle.getBoundingClientRect();
+                const handleStyle = window.getComputedStyle(handle);
+                log('调整大小手柄状态:', 'info');
+                log(`- 位置: ${handleRect.left}, ${handleRect.top}`, 'info');
+                log(`- 尺寸: ${handleRect.width}px × ${handleRect.height}px`, 'info');
+                log(`- z-index: ${handleStyle.zIndex}`, 'info');
+                log(`- pointer-events: ${handleStyle.pointerEvents}`, 'info');
+            } else {
+                log('未找到调整大小手柄', 'error');
+            }
+        }
+
+        // 页面加载完成后自动检查
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const plugin = document.getElementById('ai-image-optimizer');
+                if (plugin) {
+                    log('插件已加载，开始测试调整大小功能', 'success');
+                    checkResizeHandle();
+                } else {
+                    log('插件未找到，请确保插件已启用', 'error');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html> 

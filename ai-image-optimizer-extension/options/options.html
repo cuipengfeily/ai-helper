@@ -116,6 +116,63 @@
         </div>
       </section>
 
+      <!-- 插件显示设置 -->
+      <section class="settings-section">
+        <h2 class="section-title">🎯 插件显示设置</h2>
+        <div class="section-content">
+          <div class="setting-group">
+            <label class="setting-label">插件插入位置</label>
+            <select class="setting-select" id="insertPosition">
+              <option value="body-top">页面顶部 (推荐)</option>
+              <option value="body-bottom">页面底部</option>
+              <option value="input-parent">输入框父容器</option>
+              <option value="input-sibling">输入框同级</option>
+              <option value="main-container">主容器</option>
+              <option value="custom">自定义选择</option>
+            </select>
+            <div class="setting-description">
+              选择插件在页面中的显示位置。如果插件遮挡了页面内容，请尝试其他位置。
+            </div>
+          </div>
+
+          <div class="setting-group" id="customSelectorGroup" style="display: none;">
+            <label class="setting-label">自定义选择器</label>
+            <input type="text" class="setting-input" id="customSelector" placeholder="例如: .main-content, #container, body">
+            <div class="setting-description">
+              输入CSS选择器来指定插件插入位置。例如：.main-content 或 #container
+            </div>
+          </div>
+
+          <div class="setting-group">
+            <label class="setting-label">显示模式</label>
+            <select class="setting-select" id="displayMode">
+              <option value="fixed">固定定位 (悬浮显示)</option>
+              <option value="relative">相对定位 (内联显示)</option>
+              <option value="absolute">绝对定位</option>
+            </select>
+            <div class="setting-description">
+              固定定位：插件悬浮在页面上方；相对定位：插件嵌入到页面布局中。
+            </div>
+          </div>
+
+          <div class="setting-group">
+            <button type="button" class="test-btn" id="analyzePage">
+              🔍 分析当前页面结构
+            </button>
+            <div class="analysis-result" id="pageAnalysisResult"></div>
+          </div>
+
+          <div class="setting-group">
+            <button type="button" class="test-btn" id="applySettings">
+              ⚡ 应用设置到当前页面
+            </button>
+            <div class="setting-description">
+              点击此按钮将当前设置应用到正在访问的网站页面。
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- 高级设置 -->
       <section class="settings-section">
         <h2 class="section-title">⚙️ 高级设置</h2>

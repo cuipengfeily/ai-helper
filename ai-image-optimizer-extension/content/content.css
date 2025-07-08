@@ -1,49 +1,104 @@
 /* AI图片描述优化助手 - 样式文件 */
 
+/* 固定定位模式（默认） */
 .ai-optimizer-container {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
-  margin-top: 20px;
-  overflow: hidden;
-  position: relative;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 350px;
+  height: 500px;
+  min-width: 300px;
+  max-width: 600px;
+  min-height: 400px;
+  max-height: 80vh;
+  overflow: auto; /* 改为auto，允许整个容器滚动 */
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  z-index: 9999;
+  /* 确保插件显示在最上层 */
+  display: flex !important;
+  flex-direction: column !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  /* 支持调整大小 */
+  box-sizing: border-box;
+}
+
+/* 插件固定尺寸样式 */
+.ai-optimizer-container {
+  width: 600px !important;
+  height: 400px !important;
+  resize: none !important;
+  min-width: 600px !important;
+  max-width: 600px !important;
+  min-height: 400px !important;
+  max-height: 400px !important;
+}
+
+/* 相对定位模式 */
+.ai-optimizer-container.relative-mode {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  margin: 20px 0;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* 绝对定位模式 */
+.ai-optimizer-container.absolute-mode {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  max-width: 800px;
+  width: 100%;
 }
 
 /* 头部区域 */
 .optimizer-header {
   background: rgba(255, 255, 255, 0.1);
-  padding: 16px 20px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: move;
+  user-select: none;
+  /* 确保头部固定在顶部，不随容器调整而移动 */
+  flex-shrink: 0;
+  min-height: 50px;
 }
 
 .optimizer-title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .optimizer-main-icon {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .optimizer-settings-btn {
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
@@ -53,51 +108,88 @@
   transform: translateY(-1px);
 }
 
+.optimizer-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.optimizer-close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.optimizer-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
 /* 内容区域 */
 .optimizer-content {
-  padding: 24px;
+  padding: 16px;
   background: rgba(255, 255, 255, 0.95);
   color: #333;
+  /* 支持垂直滚动 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 10000;
+  /* 让内容区域占据剩余空间 */
+  flex: 1;
+  min-height: 0; /* 重要：允许flex子元素收缩 */
+  /* 移除固定最大高度，让flex布局自动计算 */
 }
 
 /* 每一行的布局 */
 .optimizer-row {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
-  gap: 16px;
+  margin-bottom: 12px;
+  gap: 12px;
 }
 
 .optimizer-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-weight: 500;
   color: #2c3e50;
-  min-width: 120px;
-  font-size: 14px;
+  min-width: 100px;
+  font-size: 13px;
 }
 
 .optimizer-icon {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 /* 下拉菜单样式 */
 .optimizer-select {
   flex: 1;
-  padding: 10px 16px;
+  padding: 8px 12px;
   border: 2px solid #e1e8ed;
-  border-radius: 10px;
+  border-radius: 8px;
   background: white;
-  font-size: 14px;
+  font-size: 13px;
   color: #2c3e50;
   transition: all 0.3s ease;
   appearance: none;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
+  background-position: right 10px center;
   background-repeat: no-repeat;
-  background-size: 16px;
-  padding-right: 40px;
+  background-size: 14px;
+  padding-right: 35px;
   cursor: pointer;
 }
 
@@ -114,24 +206,24 @@
 /* 操作按钮区域 */
 .optimizer-actions {
   text-align: center;
-  margin: 24px 0;
-  padding: 16px 0;
+  margin: 16px 0;
+  padding: 12px 0;
   border-top: 1px solid #e1e8ed;
   border-bottom: 1px solid #e1e8ed;
 }
 
 /* 按钮样式 */
 .optimizer-btn {
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 10px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   text-decoration: none;
   user-select: none;
 }
@@ -140,8 +232,8 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  font-size: 16px;
-  padding: 14px 32px;
+  font-size: 14px;
+  padding: 12px 24px;
 }
 
 .optimizer-btn-primary:hover {
@@ -216,6 +308,8 @@
   border-radius: 16px;
   backdrop-filter: blur(5px);
   z-index: 1000;
+  /* 确保加载区域不会影响flex布局 */
+  pointer-events: none;
 }
 
 .loading-spinner {
@@ -363,6 +457,95 @@
   color: white;
 }
 
+/* 内容区域滚动条样式 */
+.optimizer-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.optimizer-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.optimizer-content::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.5);
+  border-radius: 3px;
+}
+
+.optimizer-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 126, 234, 0.7);
+}
+
+/* 插件容器滚动条样式 */
+.ai-optimizer-container::-webkit-scrollbar {
+  width: 12px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.ai-optimizer-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 6px !important;
+}
+
+.ai-optimizer-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border-radius: 6px !important;
+  transition: background-color 0.2s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.ai-optimizer-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 确保滚动条在调整大小时正确显示 */
+.ai-optimizer-container::-webkit-scrollbar-corner {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 强制显示滚动条 */
+.ai-optimizer-container,
+#ai-image-optimizer {
+  overflow: auto !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* 为 #ai-image-optimizer 添加滚动条样式 */
+#ai-image-optimizer::-webkit-scrollbar {
+  width: 16px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  display: block !important;
+}
+
+#ai-image-optimizer::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+#ai-image-optimizer::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 8px !important;
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+  min-height: 40px !important;
+}
+
+#ai-image-optimizer::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+#ai-image-optimizer::-webkit-scrollbar-corner {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 确保滚动条始终显示 */
+#ai-image-optimizer {
+  scrollbar-width: auto !important;
+  scrollbar-color: rgba(255, 255, 255, 0.9) rgba(255, 255, 255, 0.3) !important;
+}
+
 /* 禁用状态 */
 .optimizer-btn:disabled {
   opacity: 0.6;
@@ -391,4 +574,46 @@
 .ai-optimizer-container * {
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* 强制显示规则 - 确保插件完全可见 */
+#ai-image-optimizer {
+  display: flex !important;
+  flex-direction: column !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: fixed !important;
+  z-index: 9999 !important;
+  overflow: auto !important;
+  box-sizing: border-box !important;
+}
+
+#ai-image-optimizer * {
+  display: revert !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+}
+
+/* 确保下拉菜单和结果区域可见 */
+.optimizer-select,
+.optimizer-result,
+.optimizer-content,
+.optimizer-actions {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 10001 !important;
+}
+
+/* 修复可能的父容器限制 */
+.ai-optimizer-container {
+  position: fixed !important;
+  z-index: 9999 !important;
+  overflow: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
 }

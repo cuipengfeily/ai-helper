@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI图片描述优化助手 - 测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .info h4 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        
+        .info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .info li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 AI图片描述优化助手 - 测试页面</h1>
+            <p>测试插件的不同显示位置和模式</p>
+        </div>
+        
+        <div class="info">
+            <h4>📋 测试说明</h4>
+            <ul>
+                <li>此页面包含多个输入框，用于测试插件的不同插入位置</li>
+                <li>在插件设置页面中，您可以配置不同的插入位置和显示模式</li>
+                <li>使用"分析当前页面结构"功能来查看页面的DOM结构</li>
+                <li>尝试不同的设置来找到最适合的显示位置</li>
+            </ul>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h3>📝 主要输入区域</h3>
+                <div class="input-group">
+                    <label for="mainInput">图片描述输入框：</label>
+                    <textarea id="mainInput" placeholder="请输入您的图片描述，插件应该会在这里显示..."></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label for="secondaryInput">辅助输入框：</label>
+                    <textarea id="secondaryInput" placeholder="这是另一个输入框，用于测试不同的插入位置..."></textarea>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>⚙️ 测试控制</h3>
+                <div class="input-group">
+                    <label>插件设置：</label>
+                    <p>请打开插件的设置页面来配置显示位置和模式</p>
+                    <button class="btn" onclick="openSettings()">打开设置页面</button>
+                </div>
+                
+                <div class="input-group">
+                    <label>测试操作：</label>
+                    <button class="btn" onclick="reloadPage()">重新加载页面</button>
+                    <button class="btn" onclick="clearInputs()">清空输入框</button>
+                </div>
+                
+                <div class="input-group">
+                    <label>当前状态：</label>
+                    <div id="status">页面已加载，等待插件初始化...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section" style="margin-top: 20px;">
+            <h3>🔍 页面结构信息</h3>
+            <p>这个页面包含以下主要元素：</p>
+            <ul>
+                <li><strong>body</strong> - 页面主体</li>
+                <li><strong>.container</strong> - 主容器</li>
+                <li><strong>.content</strong> - 内容区域</li>
+                <li><strong>.section</strong> - 各个区块</li>
+                <li><strong>textarea</strong> - 输入框元素</li>
+            </ul>
+            <p>您可以在插件设置中使用这些选择器来测试不同的插入位置。</p>
+        </div>
+    </div>
+    
+    <script>
+        function openSettings() {
+            if (chrome && chrome.runtime) {
+                chrome.runtime.openOptionsPage();
+            } else {
+                alert('请在浏览器扩展环境中运行此页面');
+            }
+        }
+        
+        function reloadPage() {
+            location.reload();
+        }
+        
+        function clearInputs() {
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+        }
+        
+        // 监听插件状态
+        function updateStatus() {
+            const statusEl = document.getElementById('status');
+            const optimizer = document.getElementById('ai-image-optimizer');
+            
+            if (optimizer) {
+                statusEl.innerHTML = '✅ 插件已加载并显示';
+                statusEl.style.color = '#28a745';
+            } else {
+                statusEl.innerHTML = '⏳ 等待插件加载...';
+                statusEl.style.color = '#ffc107';
+            }
+        }
+        
+        // 定期检查插件状态
+        setInterval(updateStatus, 1000);
+        updateStatus();
+        
+        // 页面加载完成后更新状态
+        window.addEventListener('load', updateStatus);
+    </script>
+</body>
+</html> 

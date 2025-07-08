@@ -1,29 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "AI图片描述优化助手",
+  "name": "AI图片描述优化助手 (调试版)",
   "version": "1.0.0",
-  "description": "智能优化AI图片生成的文本描述，提升图片生成质量",
+  "description": "智能优化AI图片生成的文本描述，提升图片生成质量 - 调试版本",
   
   "permissions": [
     "storage",
     "activeTab",
-    "scripting",
-    "tabs"
+    "scripting"
   ],
   
   "host_permissions": [
     "https://jimeng.jianying.com/*",
     "https://api.openai.com/*",
     "https://api.anthropic.com/*",
-    "https://generativelanguage.googleapis.com/*",
-    "<all_urls>"
+    "https://generativelanguage.googleapis.com/*"
   ],
   
   "content_scripts": [
     {
       "matches": ["https://jimeng.jianying.com/ai-tool/home/*"],
-      "js": ["content/content.js"],
-      "css": ["content/content.css"],
+      "js": ["content/content-simple.js"],
       "run_at": "document_end"
     }
   ],
@@ -34,7 +31,7 @@
   
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "AI图片描述优化助手",
+    "default_title": "AI图片描述优化助手 (调试版)",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
@@ -56,4 +53,4 @@
       "matches": ["https://jimeng.jianying.com/*"]
     }
   ]
-}
+} 

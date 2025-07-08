@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插件滚动条功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .test-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .test-info h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .test-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .test-info li {
+            margin: 8px 0;
+            color: #666;
+        }
+        
+        .test-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 20px 0;
+            resize: vertical;
+        }
+        
+        .test-button {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+        
+        .test-button.secondary {
+            background: #6c757d;
+        }
+        
+        .test-button.secondary:hover {
+            background: #545b62;
+        }
+        
+        .scroll-test {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .scroll-test h4 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .scroll-instruction {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .scroll-instruction h5 {
+            margin-top: 0;
+            color: #856404;
+        }
+        
+        .scroll-instruction ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .scroll-instruction li {
+            margin: 5px 0;
+            color: #856404;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background: #28a745;
+        }
+        
+        .status-error {
+            background: #dc3545;
+        }
+        
+        .status-info {
+            background: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">插件滚动条功能测试</h1>
+        
+        <div class="test-info">
+            <h3>功能说明</h3>
+            <ul>
+                <li>当插件容器调整得比较小时，内容会被压缩</li>
+                <li>现在添加了容器级别的滚动条功能</li>
+                <li>当内容超出容器高度时，会自动显示滚动条</li>
+                <li>用户可以通过滚动来查看所有被隐藏的元素</li>
+                <li>滚动条样式美观，与插件主题一致</li>
+            </ul>
+        </div>
+        
+        <div class="scroll-test">
+            <h4>滚动条测试步骤</h4>
+            <div class="scroll-instruction">
+                <h5>测试方法：</h5>
+                <ol>
+                    <li>确保插件已安装并启用</li>
+                    <li>刷新页面，插件应该出现在右上角</li>
+                    <li>找到右下角的调整大小手柄（↘图标）</li>
+                    <li>将插件调整到较小的尺寸（比如300px × 400px）</li>
+                    <li>观察是否出现滚动条</li>
+                    <li>使用滚动条查看被隐藏的内容</li>
+                    <li>验证所有功能是否仍然可用</li>
+                </ol>
+            </div>
+        </div>
+        
+        <textarea 
+            class="test-input" 
+            placeholder="这是一个测试输入框，用于触发插件的显示..."
+        >请在这里输入一些内容，然后观察插件的行为。插件应该能够识别到这个输入框并显示在页面上。当您调整插件大小时，应该能看到滚动条功能。</textarea>
+        
+        <div style="text-align: center;">
+            <button class="test-button" onclick="location.reload()">刷新页面</button>
+            <button class="test-button secondary" onclick="checkScrollStatus()">检查滚动状态</button>
+            <button class="test-button secondary" onclick="testSmallSize()">测试小尺寸</button>
+        </div>
+        
+        <div class="scroll-test">
+            <h4>预期结果</h4>
+            <ul>
+                <li><span class="status-indicator status-success"></span>插件容器可以调整到较小尺寸</li>
+                <li><span class="status-indicator status-success"></span>当内容超出时显示滚动条</li>
+                <li><span class="status-indicator status-success"></span>滚动条样式美观，半透明白色</li>
+                <li><span class="status-indicator status-success"></span>可以通过滚动查看所有内容</li>
+                <li><span class="status-indicator status-success"></span>所有功能在滚动后仍然可用</li>
+                <li><span class="status-indicator status-success"></span>调整回大尺寸时滚动条自动隐藏</li>
+            </ul>
+        </div>
+        
+        <div class="test-info">
+            <h3>技术实现</h3>
+            <ul>
+                <li>容器设置为 <code>overflow: auto</code></li>
+                <li>动态检测内容高度与容器高度</li>
+                <li>根据检测结果显示或隐藏滚动条</li>
+                <li>自定义滚动条样式，与插件主题匹配</li>
+                <li>在调整大小时实时更新滚动状态</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function addStatusMessage(message, type = 'info') {
+            const statusIndicator = document.createElement('span');
+            statusIndicator.className = `status-indicator status-${type}`;
+            
+            const messageElement = document.createElement('div');
+            messageElement.style.margin = '10px 0';
+            messageElement.appendChild(statusIndicator);
+            messageElement.appendChild(document.createTextNode(message));
+            
+            // 添加到页面
+            const container = document.querySelector('.scroll-test');
+            if (container) {
+                container.appendChild(messageElement);
+            }
+        }
+
+        function checkScrollStatus() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                addStatusMessage('未找到插件元素', 'error');
+                return;
+            }
+
+            const rect = plugin.getBoundingClientRect();
+            const scrollHeight = plugin.scrollHeight;
+            const clientHeight = plugin.clientHeight;
+            const hasScroll = scrollHeight > clientHeight;
+            
+            addStatusMessage(`插件尺寸: ${rect.width}px × ${rect.height}px`, 'info');
+            addStatusMessage(`内容高度: ${scrollHeight}px, 容器高度: ${clientHeight}px`, 'info');
+            
+            if (hasScroll) {
+                addStatusMessage('滚动条已显示 ✓', 'success');
+            } else {
+                addStatusMessage('滚动条已隐藏 ✓', 'success');
+            }
+        }
+
+        function testSmallSize() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                addStatusMessage('未找到插件元素', 'error');
+                return;
+            }
+
+            // 将插件调整到较小尺寸
+            plugin.style.width = '300px';
+            plugin.style.height = '400px';
+            
+            addStatusMessage('已将插件调整到小尺寸进行测试', 'info');
+            
+            // 延迟检查滚动状态
+            setTimeout(() => {
+                checkScrollStatus();
+            }, 500);
+        }
+
+        // 页面加载完成后自动检查
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const plugin = document.getElementById('ai-image-optimizer');
+                if (plugin) {
+                    addStatusMessage('插件已加载，可以开始测试滚动功能', 'success');
+                } else {
+                    addStatusMessage('插件未找到，请确保插件已启用', 'error');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html> 

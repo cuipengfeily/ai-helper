@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>临时图标生成器 - AI图片描述优化助手</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .icon-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .icon-item {
+            margin: 20px;
+            display: inline-block;
+            text-align: center;
+            vertical-align: top;
+        }
+        .icon-item img {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .download-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 AI图片描述优化助手 - 临时图标</h1>
+        
+        <div class="instructions">
+            <h3>📝 快速使用说明：</h3>
+            <ol>
+                <li>右键点击下方图标选择"图片另存为"</li>
+                <li>分别保存为：icon16.png, icon48.png, icon128.png</li>
+                <li>将文件放入 ai-image-optimizer-extension/icons/ 目录</li>
+                <li>在Chrome中重新加载扩展</li>
+            </ol>
+        </div>
+
+        <div class="icon-container">
+            <h3>📱 扩展图标下载</h3>
+            
+            <div class="icon-item">
+                <h4>16x16 (工具栏图标)</h4>
+                <img id="icon16" width="32" height="32" style="image-rendering: pixelated;">
+                <br>
+                <a href="#" class="download-btn" onclick="downloadIcon('icon16', 'icon16.png')">📥 下载 icon16.png</a>
+            </div>
+
+            <div class="icon-item">
+                <h4>48x48 (插件管理页面)</h4>
+                <img id="icon48" width="48" height="48">
+                <br>
+                <a href="#" class="download-btn" onclick="downloadIcon('icon48', 'icon48.png')">📥 下载 icon48.png</a>
+            </div>
+
+            <div class="icon-item">
+                <h4>128x128 (Chrome Web Store)</h4>
+                <img id="icon128" width="128" height="128">
+                <br>
+                <a href="#" class="download-btn" onclick="downloadIcon('icon128', 'icon128.png')">📥 下载 icon128.png</a>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>🔧 替代方案：</h3>
+            <p>如果您有设计软件或在线工具，也可以使用以下简单设计要求：</p>
+            <ul>
+                <li>背景：渐变色从 #667eea 到 #764ba2</li>
+                <li>前景：白色的 "AI" 文字或简单图标</li>
+                <li>形状：圆形或圆角矩形</li>
+                <li>风格：现代简洁</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 创建简单的PNG图标base64数据
+        function createSimpleIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // 创建渐变背景
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            
+            // 绘制圆形背景
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 添加白色文字 "AI"
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            if (size >= 32) {
+                ctx.font = `bold ${Math.floor(size/4)}px Arial`;
+                ctx.fillText('AI', size/2, size/2);
+            } else {
+                // 对于16px图标，绘制简单的白色圆点
+                ctx.beginPath();
+                ctx.arc(size/2, size/2, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        // 生成并显示图标
+        document.getElementById('icon16').src = createSimpleIcon(16);
+        document.getElementById('icon48').src = createSimpleIcon(48);
+        document.getElementById('icon128').src = createSimpleIcon(128);
+        
+        // 下载功能
+        function downloadIcon(iconId, filename) {
+            const img = document.getElementById(iconId);
+            const link = document.createElement('a');
+            link.href = img.src;
+            link.download = filename;
+            link.click();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>容器调整大小修复测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .test-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .test-info h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .test-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .test-info li {
+            margin: 8px 0;
+            color: #666;
+        }
+        
+        .test-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 20px 0;
+            resize: vertical;
+        }
+        
+        .test-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+        
+        .test-button.secondary {
+            background: #6c757d;
+        }
+        
+        .test-button.secondary:hover {
+            background: #545b62;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background: #28a745;
+        }
+        
+        .status-error {
+            background: #dc3545;
+        }
+        
+        .status-warning {
+            background: #ffc107;
+        }
+        
+        .test-results {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .test-results h4 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .test-result-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">容器调整大小修复测试</h1>
+        
+        <div class="test-info">
+            <h3>修复内容</h3>
+            <ul>
+                <li>使用flex布局确保内部元素正确包含在容器内</li>
+                <li>头部区域固定高度，不随容器调整而移动</li>
+                <li>内容区域自动适应剩余空间</li>
+                <li>移除固定高度限制，让flex布局自动计算</li>
+                <li>确保所有元素都在容器边界内</li>
+            </ul>
+        </div>
+        
+        <div class="test-info">
+            <h3>测试步骤</h3>
+            <ol>
+                <li>确保插件已安装并启用</li>
+                <li>刷新页面，插件应该出现在右上角</li>
+                <li>找到右下角的调整大小手柄（↘图标）</li>
+                <li>拖拽手柄调整插件大小</li>
+                <li>验证所有元素是否都在容器内</li>
+                <li>检查内容区域是否正确适应新尺寸</li>
+            </ol>
+        </div>
+        
+        <textarea 
+            class="test-input" 
+            placeholder="这是一个测试输入框，用于触发插件的显示..."
+        >请在这里输入一些内容，然后观察插件的行为。插件应该能够识别到这个输入框并显示在页面上。</textarea>
+        
+        <div style="text-align: center;">
+            <button class="test-button" onclick="location.reload()">刷新页面</button>
+            <button class="test-button secondary" onclick="checkContainerElements()">检查容器元素</button>
+            <button class="test-button secondary" onclick="testResize()">测试调整大小</button>
+        </div>
+        
+        <div class="test-results">
+            <h4>测试结果</h4>
+            <div id="testResults">
+                <div class="test-result-item">
+                    <span class="status-indicator status-warning"></span>
+                    等待插件加载...
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-info">
+            <h3>预期结果</h3>
+            <ul>
+                <li>插件容器应该能够正确调整大小</li>
+                <li>所有内部元素都应该保持在容器边界内</li>
+                <li>头部区域应该固定在顶部</li>
+                <li>内容区域应该自动适应剩余空间</li>
+                <li>调整大小时不应该有元素溢出</li>
+                <li>滚动条应该在内容超出时正确显示</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function addTestResult(message, type = 'info') {
+            const testResults = document.getElementById('testResults');
+            const resultItem = document.createElement('div');
+            resultItem.className = 'test-result-item';
+            
+            const statusIndicator = document.createElement('span');
+            statusIndicator.className = `status-indicator status-${type}`;
+            
+            resultItem.appendChild(statusIndicator);
+            resultItem.appendChild(document.createTextNode(message));
+            
+            testResults.appendChild(resultItem);
+        }
+
+        function checkContainerElements() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                addTestResult('未找到插件元素', 'error');
+                return;
+            }
+
+            const rect = plugin.getBoundingClientRect();
+            const header = plugin.querySelector('.optimizer-header');
+            const content = plugin.querySelector('.optimizer-content');
+            
+            addTestResult(`插件容器尺寸: ${rect.width}px × ${rect.height}px`, 'success');
+            
+            if (header) {
+                const headerRect = header.getBoundingClientRect();
+                addTestResult(`头部区域: ${headerRect.width}px × ${headerRect.height}px`, 'success');
+            }
+            
+            if (content) {
+                const contentRect = content.getBoundingClientRect();
+                addTestResult(`内容区域: ${contentRect.width}px × ${contentRect.height}px`, 'success');
+            }
+            
+            // 检查元素是否在容器内
+            const allElements = plugin.querySelectorAll('*');
+            let overflowCount = 0;
+            
+            allElements.forEach(element => {
+                const elementRect = element.getBoundingClientRect();
+                if (elementRect.left < rect.left || 
+                    elementRect.right > rect.right || 
+                    elementRect.top < rect.top || 
+                    elementRect.bottom > rect.bottom) {
+                    overflowCount++;
+                }
+            });
+            
+            if (overflowCount === 0) {
+                addTestResult('所有元素都在容器内 ✓', 'success');
+            } else {
+                addTestResult(`${overflowCount} 个元素溢出容器 ✗`, 'error');
+            }
+        }
+
+        function testResize() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                addTestResult('未找到插件元素', 'error');
+                return;
+            }
+
+            const originalWidth = plugin.offsetWidth;
+            const originalHeight = plugin.offsetHeight;
+            
+            addTestResult(`原始尺寸: ${originalWidth}px × ${originalHeight}px`, 'info');
+            
+            // 模拟调整大小
+            plugin.style.width = (originalWidth + 50) + 'px';
+            plugin.style.height = (originalHeight + 50) + 'px';
+            
+            setTimeout(() => {
+                const newWidth = plugin.offsetWidth;
+                const newHeight = plugin.offsetHeight;
+                
+                addTestResult(`调整后尺寸: ${newWidth}px × ${newHeight}px`, 'info');
+                
+                if (newWidth > originalWidth && newHeight > originalHeight) {
+                    addTestResult('调整大小功能正常 ✓', 'success');
+                } else {
+                    addTestResult('调整大小功能异常 ✗', 'error');
+                }
+                
+                // 恢复原始尺寸
+                plugin.style.width = originalWidth + 'px';
+                plugin.style.height = originalHeight + 'px';
+            }, 100);
+        }
+
+        // 页面加载完成后自动检查
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const plugin = document.getElementById('ai-image-optimizer');
+                if (plugin) {
+                    addTestResult('插件已加载', 'success');
+                    checkContainerElements();
+                } else {
+                    addTestResult('插件未找到，请确保插件已启用', 'error');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html> 

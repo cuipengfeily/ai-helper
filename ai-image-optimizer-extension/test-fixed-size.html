@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>固定大小插件测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .test-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .test-button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
+        }
+        
+        .test-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 20px 0;
+            resize: vertical;
+        }
+        
+        .debug-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background: #4caf50;
+        }
+        
+        .status-error {
+            background: #f44336;
+        }
+        
+        .status-warning {
+            background: #ff9800;
+        }
+        
+        .status-info {
+            background: #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">固定大小插件测试</h1>
+        
+        <div class="test-info">
+            <h3>测试说明</h3>
+            <p>这个页面用于测试固定大小的插件。</p>
+            <ul>
+                <li>插件大小固定为600*400像素</li>
+                <li>插件应该显示在页面右上角</li>
+                <li>内容超出时应该显示滚动条</li>
+                <li>插件大小不可调整</li>
+            </ul>
+        </div>
+        
+        <textarea 
+            class="test-input" 
+            placeholder="这是一个测试输入框，用于触发插件的显示..."
+        >请在这里输入一些内容，然后观察插件的行为。插件应该能够识别到这个输入框并显示在页面上。</textarea>
+        
+        <div style="text-align: center;">
+            <button class="test-button" onclick="checkPluginSize()">检查插件大小</button>
+            <button class="test-button" onclick="testScrollbar()">测试滚动条</button>
+            <button class="test-button" onclick="debugPlugin()">调试插件状态</button>
+        </div>
+        
+        <div class="debug-output">
+            <h4>调试输出</h4>
+            <div id="debugOutput">
+                <div>等待插件加载...</div>
+            </div>
+        </div>
+        
+        <div class="test-info">
+            <h3>预期结果</h3>
+            <ul>
+                <li>插件尺寸为600px × 400px</li>
+                <li>插件位置在页面右上角</li>
+                <li>内容超出时显示白色滚动条</li>
+                <li>插件大小不可调整</li>
+                <li>支持拖拽移动位置</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('debugOutput');
+            const logElement = document.createElement('div');
+            logElement.style.margin = '5px 0';
+            logElement.style.padding = '5px';
+            logElement.style.borderRadius = '3px';
+            
+            const statusIndicator = document.createElement('span');
+            statusIndicator.className = `status-indicator status-${type}`;
+            
+            logElement.appendChild(statusIndicator);
+            logElement.appendChild(document.createTextNode(`[${new Date().toLocaleTimeString()}] ${message}`));
+            
+            output.appendChild(logElement);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function checkPluginSize() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            const rect = plugin.getBoundingClientRect();
+            const style = window.getComputedStyle(plugin);
+            
+            log('插件尺寸检查:', 'info');
+            log(`- 实际尺寸: ${rect.width}px × ${rect.height}px`, 'info');
+            log(`- CSS宽度: ${style.width}`, 'info');
+            log(`- CSS高度: ${style.height}`, 'info');
+            log(`- resize属性: ${style.resize}`, 'info');
+            log(`- min-width: ${style.minWidth}`, 'info');
+            log(`- max-width: ${style.maxWidth}`, 'info');
+            log(`- min-height: ${style.minHeight}`, 'info');
+            log(`- max-height: ${style.maxHeight}`, 'info');
+            
+            const expectedWidth = 600;
+            const expectedHeight = 400;
+            const widthDiff = Math.abs(rect.width - expectedWidth);
+            const heightDiff = Math.abs(rect.height - expectedHeight);
+            
+            if (widthDiff <= 5 && heightDiff <= 5) {
+                log('插件尺寸符合预期 (600*400)', 'success');
+            } else {
+                log(`插件尺寸不符合预期，差异: 宽度${widthDiff}px, 高度${heightDiff}px`, 'warning');
+            }
+        }
+
+        function testScrollbar() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            log('测试滚动条功能...', 'info');
+            
+            const style = window.getComputedStyle(plugin);
+            log(`- overflow: ${style.overflow}`, 'info');
+            log(`- overflow-y: ${style.overflowY}`, 'info');
+            log(`- overflow-x: ${style.overflowX}`, 'info');
+            
+            const content = plugin.querySelector('.optimizer-content');
+            if (content) {
+                const contentStyle = window.getComputedStyle(content);
+                log(`- 内容区域overflow-y: ${contentStyle.overflowY}`, 'info');
+                log(`- 内容区域高度: ${content.offsetHeight}px`, 'info');
+                log(`- 内容区域scrollHeight: ${content.scrollHeight}px`, 'info');
+                
+                if (content.scrollHeight > content.offsetHeight) {
+                    log('内容超出，应该显示滚动条', 'success');
+                } else {
+                    log('内容未超出，不需要滚动条', 'info');
+                }
+            }
+        }
+
+        function debugPlugin() {
+            const plugin = document.getElementById('ai-image-optimizer');
+            if (!plugin) {
+                log('未找到插件元素', 'error');
+                return;
+            }
+
+            const rect = plugin.getBoundingClientRect();
+            const style = window.getComputedStyle(plugin);
+            
+            log('插件详细状态:', 'info');
+            log(`- 位置: ${rect.left}, ${rect.top}`, 'info');
+            log(`- 尺寸: ${rect.width}px × ${rect.height}px`, 'info');
+            log(`- z-index: ${style.zIndex}`, 'info');
+            log(`- position: ${style.position}`, 'info');
+            log(`- overflow: ${style.overflow}`, 'info');
+            log(`- resize: ${style.resize}`, 'info');
+            
+            // 检查是否有调整大小手柄
+            const handle = plugin.querySelector('.resize-handle');
+            if (handle) {
+                log('发现调整大小手柄（不应该存在）', 'error');
+            } else {
+                log('未发现调整大小手柄（正确）', 'success');
+            }
+            
+            // 检查内容区域
+            const content = plugin.querySelector('.optimizer-content');
+            if (content) {
+                const contentRect = content.getBoundingClientRect();
+                const contentStyle = window.getComputedStyle(content);
+                log('内容区域状态:', 'info');
+                log(`- 位置: ${contentRect.left}, ${contentRect.top}`, 'info');
+                log(`- 尺寸: ${contentRect.width}px × ${contentRect.height}px`, 'info');
+                log(`- overflow-y: ${contentStyle.overflowY}`, 'info');
+                log(`- scrollHeight: ${content.scrollHeight}px`, 'info');
+                log(`- clientHeight: ${content.clientHeight}px`, 'info');
+            }
+        }
+
+        // 页面加载完成后自动检查
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const plugin = document.getElementById('ai-image-optimizer');
+                if (plugin) {
+                    log('插件已加载，开始测试固定大小功能', 'success');
+                    checkPluginSize();
+                    testScrollbar();
+                } else {
+                    log('插件未找到，请确保插件已启用', 'error');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html> 

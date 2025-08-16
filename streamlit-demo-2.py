@@ -90,6 +90,24 @@ if uploaded_file is not None:
         for i, style in enumerate(selected_styles):
             with cols[i]:
                 st.info(f"{style_options[style]} {style}")
+
+        if 'generating' in st.session_state and st.session_state.generating:
+            # 显示生成的图片，每个风格对应一张图片
+            st.markdown("---")
+            st.subheader("📸 生成结果")
+            
+            # 获取生成的图片
+            desps = [f"{style_options[style]} {style}" for style in selected_styles]
+            imgs = get_picture(desps, test=True)
+            
+            # 为每个选择的风格显示对应的生成图片
+            for i, img in enumerate(imgs):
+                # st.markdown(f"**{style_options[style]} {style}**")
+                print("add image:", i)
+                with cols[i]:
+                    st.image(img, caption=f"{style_options[style]} {style}")
+                if i < len(selected_styles) - 1:  # 不是最后一个风格时添加分隔线
+                    st.markdown("---")
         
         # 生成状态
         if 'generating' in st.session_state and st.session_state.generating:
@@ -116,20 +134,8 @@ if uploaded_file is not None:
             
             st.success("✨ 所有风格图片生成完成！")
             st.session_state.generating = False
+            # refresh the page
+            # st.rerun()
 
-            # 显示生成的图片，每个风格对应一张图片
-            st.markdown("---")
-            st.subheader("📸 生成结果")
-            
-            # 获取生成的图片
-            desps = [f"{style_options[style]} {style}" for style in selected_styles]
-            imgs = get_picture(desps, test=True)
-            
-            # 为每个选择的风格显示对应的生成图片
-            for i, (style, img) in enumerate(zip(selected_styles, imgs)):
-                st.markdown(f"**{style_options[style]} {style}**")
-                st.image(img, caption=f"{style_options[style]} {style}", width=400)
-                if i < len(selected_styles) - 1:  # 不是最后一个风格时添加分隔线
-                    st.markdown("---")
 else:
     st.info("👆 请先上传一张图片开始使用") 

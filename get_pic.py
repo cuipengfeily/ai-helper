@@ -11,7 +11,7 @@ def get_picture(desps: list[str], test: bool = True):
         for desp in desps:
             ret.append(os.path.join(local_path, f"{count}.jpg"))
             count += 1
-            if count >= 3:
+            if count >= 4:
                 break
     else:
         pass
